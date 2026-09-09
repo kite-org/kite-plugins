@@ -42,5 +42,10 @@ jobs:
       - name: Check formatting
         run: pnpm run format:check
 
+      - name: Check release scripts
+        run: |
+          bash -n scripts/release.sh
+          node --check scripts/publish-plugin.mjs
+
       - name: Build and package catalog
         run: pnpm run catalog --base-url=https://example.invalid/

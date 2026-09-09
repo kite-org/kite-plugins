@@ -61,7 +61,7 @@ Certificate renewal times and request approval conditions are displayed as repor
 
 The plugin is a package in the `kite-plugins` pnpm workspace. Use Node.js `^20.19.0` or `>=22.12.0` and the pnpm version specified by the workspace's `packageManager` field.
 
-The plugin uses `@kite-dev/plugin-sdk@0.0.2` from npm. Install dependencies from the `kite-plugins` repository root:
+The plugin uses `@kite-dev/plugin-sdk@0.0.4` from npm. Install dependencies from the `kite-plugins` repository root:
 
 ```sh
 pnpm install

@@ -30,7 +30,7 @@ Requirements:
 - A Kite instance matching the plugins' `engines.kite` version range (currently `^0.16.0`).
 - Python 3 for the local catalog server.
 
-The plugins in this workspace use `@kite-dev/plugin-sdk@0.0.2` from npm.
+The plugins in this workspace use `@kite-dev/plugin-sdk@0.0.4` from npm.
 
 ```text
 kite-plugins/
@@ -38,6 +38,8 @@ kite-plugins/
 │   ├── cert-manager/
 │   └── hello-world/
 ├── scripts/generate-catalog.mjs
+├── scripts/publish-plugin.mjs
+├── scripts/release.sh
 ├── package.json
 └── pnpm-workspace.yaml
 ```
@@ -152,7 +154,7 @@ The generator writes one entry per plugin directory using its current version. E
 To build the catalog and serve it locally:
 
 ```sh
-pnpm run catalog:serve
+pnpm run catalog:dev
 ```
 
 In Kite, open **Settings > General** and set **Plugin catalog > Catalog URL** to `http://127.0.0.1:18086/catalog.json`. Save the setting, then open **Plugin management** to browse and install plugins. Stop the server with Ctrl+C.
@@ -168,11 +170,65 @@ Then set **Catalog URL** in **Settings > General** to `http://192.0.2.10:18086/c
 
 After changing a plugin version, regenerate the catalog and click **Refresh catalog** in Kite. Refreshing discovers versions; it does not install updates.
 
-### Publish a catalog
+## Publish plugins on GitHub
 
-Publish `dist/catalog/` to a static HTTP(S) host, such as GitHub Pages, using the same base URL supplied to the generator.
+Each plugin has its own version and GitHub Release. The release contains one `<id>-<version>.tar.gz` asset. GitHub Pages hosts the combined catalog at:
 
-Archives can be hosted separately, including as GitHub Release assets:
+```text
+https://kite-org.github.io/kite-plugins/catalog.json
+```
+
+Catalog entries point to versioned Release assets and include their SHA-256 checksums. README previews use `raw.githubusercontent.com` URLs pinned to the release commit. No separate README or catalog asset is uploaded to a Release.
+
+### Repository setup
+
+Before the first release:
+
+1. Open **Settings > Pages** and select **GitHub Actions** as the publishing source.
+2. In **Settings > Environments > github-pages**, allow the plugin release tags (`*-v*`) to deploy. Also allow `main` if maintainers will use the workflow's manual trigger from that branch.
+
+The publish workflow uses GitHub's provided token with `contents: write`, `pages: write`, and `id-token: write`. No npm token or personal access token is needed. Forks use their own repository's Pages URL, as reported by the Pages action.
+
+### Prepare a release
+
+Install dependencies and commit your changes, then run from the repository root:
+
+```sh
+./scripts/release.sh cert-manager 0.1.3
+```
+
+The script requires a clean working tree and a stable version greater than the plugin's current version. It updates only the selected plugin's version and the workspace lockfile if needed, creates a release commit, and creates an annotated tag such as `cert-manager-v0.1.3`. It does not push.
+
+Push the commit and tag together using the command printed by the script:
+
+```sh
+git push --atomic origin HEAD cert-manager-v0.1.3
+```
+
+Pushing a plugin tag triggers `.github/workflows/publish.yml`. The workflow:
+
+1. Checks out the tag, installs locked dependencies, and runs lint and formatting checks.
+2. Verifies that the tag matches the selected plugin's package name and version.
+3. Builds and packages that plugin, then uploads the archive to a draft Release and publishes it.
+4. Adds the version's metadata to the existing catalog and deploys the catalog to Pages.
+
+Other plugins are not rebuilt. Releases are queued so catalog updates run one at a time. Prerelease versions are not supported by this workflow.
+
+### Catalog updates and retries
+
+The catalog retains every published stable plugin version. Kite displays the newest version compatible with the running Kite server; installing updates remains a manual action.
+
+Before merging, the workflow checks that the existing catalog contains all other published plugin releases. It stops if the catalog is unavailable or missing versions, including when a cached response is behind the last deployment. A missing catalog is initialized only when there are no other published plugin releases.
+
+If a Release succeeded but Pages deployment failed, rerun that workflow. You can also open **Actions > Publish plugin > Run workflow** and enter its existing tag. The workflow downloads the original Release archive and regenerates the catalog entry from that archive without rebuilding or replacing it. An existing ID/version with a different checksum is rejected.
+
+If the catalog is missing an earlier release, retry after the previous Pages deployment becomes visible or rerun the earlier release first. Do not replace the catalog with an empty file to bypass this check.
+
+After a successful deployment, configure the fixed catalog URL in Kite's **Settings > General**. Open **Plugin management**, refresh the catalog, and preview the README or install the plugin.
+
+### Other static hosts
+
+The local catalog generator can also produce a complete directory for another HTTP(S) host. To place archives on a separate host, use:
 
 ```sh
 pnpm run catalog \
@@ -180,7 +236,7 @@ pnpm run catalog \
   --package-base-url https://downloads.example.com/plugins/
 ```
 
-Upload the contents of `dist/catalog/packages/` to the package host, and publish `catalog.json` and `readmes/` on the catalog host. Make the archives available before publishing the catalog that references them. The generator creates files locally; deployment is performed separately.
+Upload `dist/catalog/packages/` to the package host before publishing `catalog.json` and `readmes/` on the catalog host. This command generates files locally and does not publish GitHub Releases.
 
 ## License
 

@@ -26,6 +26,9 @@ importers:
       prettier:
         specifier: ^3.9.6
         version: 3.9.6
+      semver:
+        specifier: ^7.8.5
+        version: 7.8.5
       typescript-eslint:
         specifier: ^8.68.0
         version: 8.70.0(eslint@10.10.0(jiti@2.7.0))(typescript@6.0.3)
@@ -33,8 +36,8 @@ importers:
   plugins/cert-manager:
     dependencies:
       '@kite-dev/plugin-sdk':
-        specifier: 0.0.2
-        version: 0.0.2(1549f2385b130cf756b33a4a066bf040)
+        specifier: 0.0.4
+        version: 0.0.4(1549f2385b130cf756b33a4a066bf040)
       react:
         specifier: ^19.2.0
         version: 19.2.8
@@ -261,8 +264,8 @@ packages:
   '@keyv/serialize@1.1.1':
     resolution: {integrity: sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA==}
 
-  '@kite-dev/plugin-sdk@0.0.2':
-    resolution: {integrity: sha512-EYNsMuICpK4re5qVxRn84jmxrRhqTmdz0N1tdQ+6sgUX4D8tQIRRFtqDlU6egiKVB4bISRXiHbsUHDzHm+LRXA==}
+  '@kite-dev/plugin-sdk@0.0.4':
+    resolution: {integrity: sha512-rRdnw2h1PUnJREnCiH4es7wowwyHKzecwsr0eXKl8wGEKT3ky0rAJDGK1t1vG02gWf9mvX4RUA2Xd4UKgESO3g==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
@@ -1757,7 +1760,7 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
-  '@kite-dev/plugin-sdk@0.0.2(1549f2385b130cf756b33a4a066bf040)':
+  '@kite-dev/plugin-sdk@0.0.4(1549f2385b130cf756b33a4a066bf040)':
     dependencies:
       '@module-federation/vite': 1.21.3(typescript@6.0.3)(vite@8.2.2(@types/node@24.13.3)(jiti@2.7.0))
       '@radix-ui/react-dialog': 1.1.23(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

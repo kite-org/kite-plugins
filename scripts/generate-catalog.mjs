@@ -1,10 +1,11 @@
 import { execFileSync } from 'node:child_process'
-import { createHash } from 'node:crypto'
 import { existsSync } from 'node:fs'
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
+
+import { catalogEntry } from './catalog-entry.mjs'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 
@@ -86,20 +87,14 @@ async function main() {
       )
       readmeUrl = new URL(`${readmeDirectory}/README.md`, baseURL).href
     }
-    plugins.push({
-      id: manifest.id,
-      name: manifest.name,
-      description: manifest.description ?? '',
-      version: manifest.version,
-      url: new URL(filename, packageBaseURL).href,
-      sha256: createHash('sha256')
-        .update(await readFile(archive))
-        .digest('hex'),
-      requires: manifest.requires,
-      ...(readmeUrl ? { readmeUrl } : {}),
-      ...(manifest.author ? { author: manifest.author } : {}),
-      ...(manifest.homepage ? { homepage: manifest.homepage } : {}),
-    })
+    plugins.push(
+      catalogEntry(
+        manifest,
+        await readFile(archive),
+        new URL(filename, packageBaseURL).href,
+        readmeUrl
+      )
+    )
   }
   await writeFile(
     resolve(output, 'catalog.json'),

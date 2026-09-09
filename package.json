@@ -16,6 +16,7 @@
     "format:check": "prettier --check .",
     "dev": "pnpm --parallel -r run dev",
     "pack": "pnpm -r run pack",
+    "release": "bash scripts/release.sh",
     "catalog": "node scripts/generate-catalog.mjs",
     "catalog:dev": "node scripts/generate-catalog.mjs --base-url=http://127.0.0.1:18086 && python3 -m http.server 18086 --bind 127.0.0.1 --directory dist/catalog"
   },
@@ -26,6 +27,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^16.5.0",
     "prettier": "^3.9.6",
+    "semver": "^7.8.5",
     "typescript-eslint": "^8.68.0"
   }
 }
