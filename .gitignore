@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.pnpm-store/
+.vite/
+__mf__virtual/
+*.tar.gz
+*.tgz
