@@ -75,3 +75,20 @@ jobs:
       - name: Deploy catalog
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Mirror packages and README files
+        run: |
+          # Use the workflow revision's script when republishing an older tag.
+          git show "${GITHUB_SHA}:scripts/mirror-catalog.mjs" > scripts/mirror-catalog.mjs
+          node scripts/mirror-catalog.mjs dist/pages/catalog.json https://kite-plugins.zzde.me/
+
+      - name: Deploy to EdgeOne Makers
+        env:
+          EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
+        run: |
+          : "${EDGEONE_API_TOKEN:?Set the EDGEONE_API_TOKEN repository secret}"
+          pnpm dlx edgeone@1.6.37 makers deploy ./dist/edgeone \
+            --name kite-plugins \
+            --token "$EDGEONE_API_TOKEN" \
+            --env production \
+            --area overseas

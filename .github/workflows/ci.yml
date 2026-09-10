@@ -46,6 +46,7 @@ jobs:
         run: |
           bash -n scripts/release.sh
           node --check scripts/publish-plugin.mjs
+          node --check scripts/mirror-catalog.mjs
 
       - name: Build and package catalog
         run: pnpm run catalog --base-url=https://example.invalid/

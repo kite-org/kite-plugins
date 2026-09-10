@@ -38,6 +38,7 @@ kite-plugins/
 │   ├── cert-manager/
 │   └── hello-world/
 ├── scripts/generate-catalog.mjs
+├── scripts/mirror-catalog.mjs
 ├── scripts/publish-plugin.mjs
 ├── scripts/release.sh
 ├── package.json
@@ -172,13 +173,14 @@ After changing a plugin version, regenerate the catalog and click **Refresh cata
 
 ## Publish plugins on GitHub
 
-Each plugin has its own version and GitHub Release. The release contains one `<id>-<version>.tar.gz` asset. GitHub Pages hosts the combined catalog at:
+Each plugin has its own version and GitHub Release. The release contains one `<id>-<version>.tar.gz` asset. The combined catalog is published to two endpoints:
 
-```text
-https://kite-org.github.io/kite-plugins/catalog.json
-```
+| Catalog | URL                                                    | Packages and README previews                                              |
+| ------- | ------------------------------------------------------ | ------------------------------------------------------------------------- |
+| GitHub  | `https://kite-org.github.io/kite-plugins/catalog.json` | GitHub Release assets and commit-pinned `raw.githubusercontent.com` URLs. |
+| EdgeOne | `https://kite-plugins.zzde.me/catalog.json`            | Files hosted under `kite-plugins.zzde.me`.                                |
 
-Catalog entries point to versioned Release assets and include their SHA-256 checksums. README previews use `raw.githubusercontent.com` URLs pinned to the release commit. No separate README or catalog asset is uploaded to a Release.
+Choose either URL in Kite's **Settings > General > Plugin catalog**. Both catalogs contain the same plugin versions and SHA-256 checksums. No separate README or catalog asset is uploaded to a GitHub Release.
 
 ### Repository setup
 
@@ -187,7 +189,16 @@ Before the first release:
 1. Open **Settings > Pages** and select **GitHub Actions** as the publishing source.
 2. In **Settings > Environments > github-pages**, allow the plugin release tags (`*-v*`) to deploy. Also allow `main` if maintainers will use the workflow's manual trigger from that branch.
 
-The publish workflow uses GitHub's provided token with `contents: write`, `pages: write`, and `id-token: write`. No npm token or personal access token is needed. Forks use their own repository's Pages URL, as reported by the Pages action.
+GitHub publishing uses the provided token with `contents: write`, `pages: write`, and `id-token: write`. No npm token or personal access token is needed. Forks use their own repository's Pages URL, as reported by the Pages action.
+
+For EdgeOne deployment:
+
+1. In **EdgeOne > Makers**, create a **Direct Upload** project named `kite-plugins`. The workflow can also create it on its first deployment. It uses the acceleration region excluding mainland China (`overseas`).
+2. Open **Makers > Settings > API Token**, create a token, and copy its value. See the [API Token documentation](https://pages.edgeone.ai/zh/document/api-token) or open the [Tencent Cloud token settings](https://console.cloud.tencent.com/edgeone/pages?tab=settings).
+3. In this GitHub repository, open **Settings > Secrets and variables > Actions > New repository secret**. Add `EDGEONE_API_TOKEN` with that value.
+4. In the Makers project's domain settings, bind `kite-plugins.zzde.me`, configure the supplied DNS CNAME record, and enable HTTPS.
+
+`EDGEONE_API_TOKEN` is the only additional secret. The project name and public domain are set in `.github/workflows/publish.yml`. Deployment uses the pinned EdgeOne CLI through pnpm; no separate build runs in Makers.
 
 ### Prepare a release
 
@@ -211,8 +222,9 @@ Pushing a plugin tag triggers `.github/workflows/publish.yml`. The workflow:
 2. Verifies that the tag matches the selected plugin's package name and version.
 3. Builds and packages that plugin, then uploads the archive to a draft Release and publishes it.
 4. Adds the version's metadata to the existing catalog and deploys the catalog to Pages.
+5. Downloads all packages and README files referenced by that catalog, verifies each package's SHA-256 checksum, and deploys the EdgeOne mirror.
 
-Other plugins are not rebuilt. Releases are queued so catalog updates run one at a time. Prerelease versions are not supported by this workflow.
+Other plugins are not rebuilt. The EdgeOne deployment includes every catalog version, preserving older package URLs. Only the mirror's download and README URLs are rewritten; the GitHub catalog is unchanged. Releases are queued so catalog updates run one at a time. Prerelease versions are not supported by this workflow.
 
 ### Catalog updates and retries
 
@@ -222,9 +234,19 @@ Before merging, the workflow checks that the existing catalog contains all other
 
 If a Release succeeded but Pages deployment failed, rerun that workflow. You can also open **Actions > Publish plugin > Run workflow** and enter its existing tag. The workflow downloads the original Release archive and regenerates the catalog entry from that archive without rebuilding or replacing it. An existing ID/version with a different checksum is rejected.
 
+After configuring EdgeOne for the first time, run **Publish plugin** from `main` with an existing tag such as `cert-manager-v0.1.2` to deploy the mirror without releasing a new version. If EdgeOne deployment fails, the already published GitHub catalog remains available. Rerunning the workflow merges the current catalog again before rebuilding the complete mirror.
+
 If the catalog is missing an earlier release, retry after the previous Pages deployment becomes visible or rerun the earlier release first. Do not replace the catalog with an empty file to bypass this check.
 
 After a successful deployment, configure the fixed catalog URL in Kite's **Settings > General**. Open **Plugin management**, refresh the catalog, and preview the README or install the plugin.
+
+To prepare an EdgeOne deployment directory locally from a downloaded GitHub catalog:
+
+```sh
+node scripts/mirror-catalog.mjs /path/to/catalog.json https://kite-plugins.zzde.me/
+```
+
+The script writes `dist/edgeone/` with `catalog.json`, `packages/`, and `readmes/`. It downloads published files without building plugins or modifying the input catalog. The workflow deploys this directory automatically.
 
 ### Other static hosts
 
