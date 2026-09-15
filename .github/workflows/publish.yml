@@ -40,16 +40,27 @@ jobs:
           cache-dependency-path: pnpm-lock.yaml
           package-manager-cache: false
 
+      - name: Check versions
+        id: versions
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node script/check-versions.mjs sdk
+
       - name: Install dependencies
+        if: ${{ steps.versions.outputs.publish == 'true' }}
         run: pnpm install --frozen-lockfile
 
       - name: Lint
+        if: ${{ steps.versions.outputs.publish == 'true' }}
         run: pnpm run lint
 
       - name: Check formatting
+        if: ${{ steps.versions.outputs.publish == 'true' }}
         run: pnpm run format:check
 
       - name: Build, package, and publish SDK and creator
+        if: ${{ steps.versions.outputs.publish == 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_PACKAGES: ${{ steps.versions.outputs.packages }}
         run: node script/publish-sdk.mjs

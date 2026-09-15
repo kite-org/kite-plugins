@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process'
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { rcompare, valid } from 'semver'
@@ -18,25 +18,28 @@ function releaseIdentity(tag) {
 async function main() {
   if (process.argv[2] === '--help') {
     console.log(
-      'Usage: GITHUB_REPOSITORY=owner/repo node script/publish-plugins.mjs'
+      "Usage: GITHUB_REPOSITORY=owner/repo RELEASE_PACKAGES='<package-directory-array>' node script/publish-plugins.mjs"
     )
     return
   }
   const repository = process.env.GITHUB_REPOSITORY
-  if (!repository) throw new Error('GITHUB_REPOSITORY is required')
+  if (!repository || !process.env.RELEASE_PACKAGES) {
+    throw new Error(
+      'GITHUB_REPOSITORY and RELEASE_PACKAGES from check-versions are required'
+    )
+  }
   process.chdir(root)
   const git = (...args) =>
     execFileSync('git', args, { encoding: 'utf8' }).trim()
   const commit = git('rev-parse', 'HEAD')
   const existingTags = new Set(git('tag', '--list').split('\n'))
   const plugins = []
-  for (const directory of await readdir('plugins', { withFileTypes: true })) {
-    if (!directory.isDirectory()) continue
-    const path = `plugins/${directory.name}/package.json`
+  for (const directory of JSON.parse(process.env.RELEASE_PACKAGES)) {
+    const path = `${directory}/package.json`
     const pkg = JSON.parse(await readFile(path, 'utf8'))
     const tag = `${pkg.name}-v${pkg.version}`
     const identity = releaseIdentity(tag)
-    if (!identity || identity.id !== directory.name) {
+    if (!identity || identity.id !== directory.split('/')[1]) {
       throw new Error(`Invalid plugin name or release version in ${path}`)
     }
     plugins.push({ ...identity, tag })
@@ -61,18 +64,6 @@ async function main() {
     const release = releases.find((item) => item.tag_name === tag)
     const filename = `${id}-${version}.tar.gz`
     const asset = release?.assets.find((item) => item.name === filename)
-    if (release?.prerelease) throw new Error(`${tag} must be a stable release`)
-    if (asset && asset.state !== 'uploaded') {
-      throw new Error(
-        `Release ${tag} has an incomplete asset; remove the unfinished draft upload before retrying`
-      )
-    }
-    if (release && !release.draft) {
-      if (!asset)
-        throw new Error(`Published release ${tag} is missing ${filename}`)
-      console.log(`${id}@${version} is already published; skipping`)
-      continue
-    }
     if (
       !asset &&
       existingTags.has(tag) &&

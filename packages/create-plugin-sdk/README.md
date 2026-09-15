@@ -174,15 +174,3 @@ node --inspect-brk packages/create-plugin-sdk/index.js plugins/my-plugin
 ```
 
 `npm create` and `pnpm create` run the published creator. Use `pnpm run create` in this repository to develop against the local SDK and creator.
-
-## Releases
-
-The creator and SDK share the same version and are released together. The creator's `workspace:*` dependency becomes the exact SDK version when packed with pnpm.
-
-From the workspace root:
-
-```sh
-./script/release.sh plugin-sdk 0.0.6
-```
-
-The script only updates both package versions. Commit the changes and push or merge them into `main`. On every push to `main`, the [publish workflow](../../.github/workflows/publish.yml) checks the SDK and creator versions separately against npm. It skips published versions and publishes missing versions with a `plugin-sdk-v<version>` tag. Stable versions use `latest`; prereleases use `beta`. No local tag or separate creator release command is needed.

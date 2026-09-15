@@ -9,12 +9,16 @@ const root = fileURLToPath(new URL('../', import.meta.url))
 async function main() {
   if (process.argv[2] === '--help') {
     console.log(
-      'Usage: GITHUB_REPOSITORY=owner/repo node script/publish-sdk.mjs'
+      "Usage: GITHUB_REPOSITORY=owner/repo RELEASE_PACKAGES='<package-directory-array>' node script/publish-sdk.mjs"
     )
     return
   }
   const repository = process.env.GITHUB_REPOSITORY
-  if (!repository) throw new Error('GITHUB_REPOSITORY is required')
+  if (!repository || !process.env.RELEASE_PACKAGES) {
+    throw new Error(
+      'GITHUB_REPOSITORY and RELEASE_PACKAGES from check-versions are required'
+    )
+  }
   process.chdir(root)
   const directories = ['packages/plugin-sdk', 'packages/create-plugin-sdk']
   const packages = await Promise.all(
@@ -31,26 +35,15 @@ async function main() {
   if (packages[1].version !== version) {
     throw new Error('The SDK and creator must have the same version')
   }
-  const pending = []
   for (const pkg of packages) {
     if (pkg.name !== `@kite-dev/${pkg.directory.split('/')[1]}`) {
       throw new Error(
         `Package identity must match its directory: ${pkg.directory}`
       )
     }
-    const response = await fetch(
-      `https://registry.npmjs.org/${encodeURIComponent(pkg.name)}/${version}`
-    )
-    if (response.ok) {
-      console.log(`${pkg.name}@${version} is already published; skipping`)
-    } else if (response.status === 404) {
-      pending.push(pkg)
-    } else {
-      throw new Error(
-        `Failed to check ${pkg.name}@${version}: HTTP ${response.status}`
-      )
-    }
   }
+  const selected = JSON.parse(process.env.RELEASE_PACKAGES)
+  const pending = packages.filter((pkg) => selected.includes(pkg.directory))
   if (pending.length === 0) return
 
   const tag = `plugin-sdk-v${version}`
