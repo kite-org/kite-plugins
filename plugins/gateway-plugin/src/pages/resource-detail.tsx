@@ -4,6 +4,7 @@ import {
   ResourceDetailShell,
   ResourceEvents,
   ResourceOverview,
+  ResourceYaml,
 } from '@kite-dev/plugin-sdk/ui'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
@@ -256,15 +257,17 @@ export default function ResourceDetail({ type }: { type: ResourceType }) {
       isLoading={query.isLoading}
       error={query.error}
       onRefresh={query.refetch}
-      onSaveYaml={async (content) => {
-        await updateResource(definition.reference, name, content, { namespace })
-        await query.refetch()
-      }}
       showDelete
       showClone
       onDeleted={() => void navigate(resolveResourcePath(definition.reference))}
-      overview={({ resource }) => <Overview type={type} resource={resource} />}
-      preYamlTabs={[
+      tabs={[
+        {
+          value: 'overview',
+          label: t('sections.overview'),
+          content: ({ resource }) => (
+            <Overview type={type} resource={resource} />
+          ),
+        },
         {
           value: 'related',
           label: t('sections.related'),
@@ -272,8 +275,23 @@ export default function ResourceDetail({ type }: { type: ResourceType }) {
             <Relations key={refreshKey} resource={resource} />
           ),
         },
-      ]}
-      extraTabs={[
+        {
+          value: 'yaml',
+          label: t('sections.yaml'),
+          content: ({ resource, refreshKey }) => (
+            <ResourceYaml
+              key={refreshKey}
+              value={resource}
+              onSave={async (content) => {
+                await updateResource(definition.reference, name, content, {
+                  namespace,
+                })
+                await query.refetch()
+              }}
+              fillHeight
+            />
+          ),
+        },
         {
           value: 'events',
           label: t('sections.events'),

@@ -201,7 +201,7 @@ async function main() {
     scripts: {
       'type-check': 'tsc --noEmit',
       build: 'tsc --noEmit && vite build',
-      dev: 'vite build --watch',
+      dev: 'kite-plugin dev',
       pack: 'kite-plugin pack',
       lint: 'eslint .',
       'lint:fix': 'eslint . --fix',
@@ -266,13 +266,12 @@ async function main() {
     [
       `cd '${directory.replaceAll("'", "'\\''")}'`,
       `${manager} install`,
-      `${manager} run build`,
-      `${manager} run pack`,
+      `${manager} run dev`,
     ].join('\n'),
     'Next steps'
   )
   prompts.outro(
-    `Created ${displayName}. Upload the built archive in Kite → Plugin management.`
+    `Created ${displayName}. Set Kite's PLUGIN_DEV_URL to the address printed by the dev command.`
   )
 }
 

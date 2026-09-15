@@ -125,10 +125,7 @@ export let ResourceTable: <T>(props: ResourceTableProps<T>) => ReactElement
 
 export interface ResourceDetailShellContext<T> {
   resource: T
-  yamlContent: string
-  setYamlContent: (value: string) => void
   refreshKey: number
-  isSavingYaml: boolean
   onRefresh: () => Promise<unknown>
 }
 
@@ -147,17 +144,11 @@ export interface ResourceDetailShellProps<T> {
   isLoading: boolean
   error: unknown
   onRefresh: () => Promise<unknown>
-  onSaveYaml?: (content: T) => Promise<unknown>
   onDeleted?: () => void
-  overview: ReactNode | ((context: ResourceDetailShellContext<T>) => ReactNode)
-  preYamlTabs?: ResourceDetailShellTab<T>[]
-  extraTabs?: ResourceDetailShellTab<T>[]
+  tabs: ResourceDetailShellTab<T>[]
   headerActions?: ReactNode
   titleIcon?: ReactNode
-  yamlToolbar?:
-    ReactNode | ((context: ResourceDetailShellContext<T>) => ReactNode)
   loadingMessage?: string
-  yamlTabLabel?: ReactNode
   showDescribe?: boolean
   showDelete?: boolean
   showClone?: boolean
@@ -166,6 +157,17 @@ export interface ResourceDetailShellProps<T> {
 export let ResourceDetailShell: <T>(
   props: ResourceDetailShellProps<T>
 ) => ReactElement
+
+export interface ResourceYamlProps<T> {
+  value: T
+  onSave?: (value: T) => Promise<unknown>
+  title?: ReactNode
+  actions?: ReactNode
+  className?: string
+  fillHeight?: boolean
+}
+
+export let ResourceYaml: <T>(props: ResourceYamlProps<T>) => ReactElement
 
 export interface ResourceOverviewField {
   label: ReactNode
@@ -195,8 +197,8 @@ export interface ResourceEventsProps {
 export let ResourceEvents: ComponentType<ResourceEventsProps>
 
 export interface NamespaceSelectorProps {
-  selectedNamespace?: string
-  handleNamespaceChange: (namespace: string) => void
+  value?: string
+  onChange: (namespace: string) => void
   showAll?: boolean
   disabled?: boolean
   triggerClassName?: string

@@ -116,14 +116,16 @@ The package is written to `<id>-<version>.tar.gz` in the plugin directory. In Ki
 | -------------- | ---------------------------------------------------------- |
 | `type-check`   | Check TypeScript without producing output.                 |
 | `build`        | Type-check and build the plugin into `dist/`.              |
-| `dev`          | Watch source files and rebuild `dist/`.                    |
+| `dev`          | Watch, rebuild, and serve a development plugin.                    |
 | `pack`         | Package the existing `dist/` directory. Run `build` first. |
 | `lint`         | Check JavaScript, TypeScript, and React Hooks with ESLint. |
 | `lint:fix`     | Apply automatic ESLint fixes.                              |
 | `format`       | Format source files and sort imports with Prettier.        |
 | `format:check` | Check formatting without changing files.                   |
 
-Plugin pages run inside Kite. Watch mode does not serve a standalone application or install rebuilt files. Increment `package.json.version`, rebuild, and install a new package to update a plugin. Restart the watch command after changing its ID or version.
+Run `pnpm dev` to start the plugin development service. It prints a manifest URL such as `http://localhost:5174/plugin.json`. Start Kite with `PLUGIN_DEV_URL` set to that URL, then edit the plugin, wait for each rebuild, and refresh Kite. Plugin pages run inside Kite with its shared components and current user and cluster context. Development does not require packaging, installation, or a version bump.
+
+The URL must be reachable from the browser. To change the listening address or port, use `pnpm dev --host 0.0.0.0 --port 5174`. Restart the command after changing the plugin ID, version, or Vite configuration. See [plugin development](../plugin-sdk/README.md#developing-a-plugin) for details.
 
 See the [SDK documentation](../plugin-sdk/README.md) for resource APIs, navigation, components, styling, and plugin configuration.
 

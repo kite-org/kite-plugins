@@ -106,8 +106,8 @@ ${
               <div className={styles.field}>
                 <Label>{t('fields.namespace')}</Label>
                 <NamespaceSelector
-                  selectedNamespace={namespace}
-                  handleNamespaceChange={setNamespace}
+                  value={namespace}
+                  onChange={setNamespace}
                   showAll={false}
                   multiple={false}
                   modal

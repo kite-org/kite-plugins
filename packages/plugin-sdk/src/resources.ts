@@ -32,6 +32,9 @@ export interface ResourceQueryOptions {
   enabled?: boolean
   staleTime?: number
   refreshInterval?: number
+}
+
+export interface ResourceListQueryOptions extends ResourceQueryOptions {
   labelSelector?: string
   fieldSelector?: string
   reduce?: boolean
@@ -192,7 +195,7 @@ export interface DebugPodResponse {
 
 export let useResources: <T = KubernetesResource>(
   resource: ResourceReference,
-  options?: ResourceQueryOptions
+  options?: ResourceListQueryOptions
 ) => UseQueryResult<T[], Error>
 export let useResource: <T = KubernetesResource>(
   resource: ResourceReference,

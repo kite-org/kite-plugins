@@ -10,7 +10,7 @@
   "scripts": {
     "type-check": "tsc --noEmit",
     "build": "tsc --noEmit && vite build",
-    "dev": "vite build --watch",
+    "dev": "kite-plugin dev",
     "pack": "kite-plugin pack"
   },
   "dependencies": {

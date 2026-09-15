@@ -16,7 +16,7 @@ A Kite administrator can install the plugin from **Avatar → Plugin management*
 
 1. Open **Plugin catalog** and select **cert-manager** from a configured catalog that provides it.
 2. Install the plugin and confirm that it is enabled under **Installed plugins**.
-3. Select a cluster, open **Custom Resource Definitions**, and select a resource in the `cert-manager.io` or `acme.cert-manager.io` API group.
+3. Select a cluster, then open the **cert-manager** sidebar group and choose a resource. The same pages are also available through **Custom Resource Definitions**.
 
 For a downloaded or locally built package, use **Install from file** and select `cert-manager-<version>.tar.gz`.
 
@@ -77,13 +77,13 @@ pnpm --filter cert-manager run pack
 
 The build writes `plugins/cert-manager/dist/`. Packaging creates `plugins/cert-manager/cert-manager-<version>.tar.gz`, using the version in the plugin's `package.json`. The package includes this README.
 
-To rebuild when source files change:
+To develop inside Kite:
 
 ```sh
 pnpm --filter cert-manager dev
 ```
 
-The watch command rebuilds the plugin output. Restart it after changing the plugin ID or version. To install a changed build, update the version in `package.json`, build and pack again, then install the new package in Kite. For distributing packages through a catalog, see the [publishing guide](https://kite.zzde.me/zh/plugins/publishing).
+The command prints a development manifest URL. Start Kite with `PLUGIN_DEV_URL` set to that URL, then wait for each rebuild and refresh Kite to see changes. No packaging, installation, or version bump is needed while developing. See the [development guide](../../packages/plugin-sdk/README.md#developing-a-plugin) for address configuration. For distributing packages through a catalog, see the [publishing guide](https://kite.zzde.me/zh/plugins/publishing).
 
 The main source files are:
 

@@ -41,7 +41,9 @@
     "history": "History",
     "rule": "Rule {{number}}",
     "matches": "Matches",
-    "filters": "Filters"
+    "filters": "Filters",
+    "overview": "Overview",
+    "yaml": "YAML"
   },
   "status": {
     "ready": "Ready",

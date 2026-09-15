@@ -156,7 +156,9 @@
     "relatedResources": "关联资源",
     "events": "事件",
     "solverNumber": "验证方式 {{number}}",
-    "authorizationNumber": "授权 {{number}}"
+    "authorizationNumber": "授权 {{number}}",
+    "overview": "概览",
+    "yaml": "YAML"
   },
   "common": {
     "yes": "是",

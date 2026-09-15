@@ -4,6 +4,7 @@ import {
   ResourceDetailShell,
   ResourceEvents,
   ResourceOverview,
+  ResourceYaml,
 } from '@kite-dev/plugin-sdk/ui'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -585,25 +586,19 @@ export default function ResourceDetail({ type }: { type: ResourceType }) {
       isLoading={query.isLoading}
       error={query.error}
       onRefresh={query.refetch}
-      onSaveYaml={
-        definition.editable
-          ? async (content) => {
-              await updateResource(definition.reference, name, content, {
-                namespace,
-              })
-              await query.refetch()
-            }
-          : undefined
-      }
       showDelete
       showClone={false}
       onDeleted={() => {
         void navigate(resolveResourcePath(definition.reference))
       }}
-      overview={({ resource }) => (
-        <DetailOverview type={type} resource={resource} />
-      )}
-      preYamlTabs={[
+      tabs={[
+        {
+          value: 'overview',
+          label: t('sections.overview'),
+          content: ({ resource }) => (
+            <DetailOverview type={type} resource={resource} />
+          ),
+        },
         {
           value: 'related',
           label: t('sections.relatedResources'),
@@ -611,8 +606,32 @@ export default function ResourceDetail({ type }: { type: ResourceType }) {
             <Relations key={refreshKey} resource={resource} />
           ),
         },
-      ]}
-      extraTabs={[
+        {
+          value: 'yaml',
+          label: t('sections.yaml'),
+          content: ({ resource, refreshKey }) => (
+            <ResourceYaml
+              key={refreshKey}
+              value={resource}
+              onSave={
+                definition.editable
+                  ? async (content) => {
+                      await updateResource(
+                        definition.reference,
+                        name,
+                        content,
+                        {
+                          namespace,
+                        }
+                      )
+                      await query.refetch()
+                    }
+                  : undefined
+              }
+              fillHeight
+            />
+          ),
+        },
         {
           value: 'events',
           label: t('sections.events'),

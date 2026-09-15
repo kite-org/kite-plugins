@@ -156,7 +156,9 @@
     "relatedResources": "Related resources",
     "events": "Events",
     "solverNumber": "Solver {{number}}",
-    "authorizationNumber": "Authorization {{number}}"
+    "authorizationNumber": "Authorization {{number}}",
+    "overview": "Overview",
+    "yaml": "YAML"
   },
   "common": {
     "yes": "Yes",

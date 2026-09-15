@@ -345,15 +345,15 @@ export type Deployment = AppsV1.Deployment & KubernetesResource
 
 `useResources<T>(ref, options?)` returns `UseQueryResult<T[], Error>`. `useResource<T>(ref, name, options?)` returns `UseQueryResult<T, Error>`. Both use the current cluster and plugin namespace unless you pass explicit `cluster` or `namespace` options. Their query cache keys include cluster and resource scope.
 
-| Query option              | Purpose                                                |
-| ------------------------- | ------------------------------------------------------ |
-| `cluster`                 | Query a specific accessible cluster                    |
-| `namespace`               | Override the plugin namespace                          |
-| `enabled`                 | Enable or disable the query                            |
-| `staleTime`               | Cache freshness in milliseconds                        |
-| `refreshInterval`         | Polling interval in milliseconds; `0` disables polling |
-| `labelSelector`           | Filter resource labels                                 |
-| `fieldSelector`, `reduce` | Built-in resource list options                         |
+| Query option      | Purpose                                                |
+| ----------------- | ------------------------------------------------------ |
+| `cluster`         | Query a specific accessible cluster                    |
+| `namespace`       | Override the plugin namespace                          |
+| `enabled`         | Enable or disable the query                            |
+| `staleTime`       | Cache freshness in milliseconds                        |
+| `refreshInterval` | Polling interval in milliseconds; `0` disables polling |
+
+`ResourceListQueryOptions` extends these shared `ResourceQueryOptions` with `labelSelector`, `fieldSelector`, and `reduce`. These options are accepted only by `useResources`, not by detail, event, describe, history, or related-resource queries. `fieldSelector` and `reduce` apply to built-in resource lists.
 
 Lists accept `_all` for all namespaces or a comma-separated namespace selection. A single-resource query needs the object's actual namespace. Use `scope: 'Cluster'` for cluster-scoped custom resources; Kite recognizes the scope of its built-in resources.
 
@@ -452,13 +452,17 @@ Optional props include `searchQueryFilter(item, query)`, `defaultHiddenColumns`,
 
 ### Resource detail pages
 
-`ResourceDetailShell<T>` provides loading/error states, an overview tab, a YAML tab, refresh, and optional resource actions:
+`ResourceDetailShell<T>` provides loading/error states, a resource header, refresh, and optional resource actions. Pass an ordered `tabs` array to define the page contents:
 
 ```tsx
 // src/pages/deployment.tsx
 import { useParams, usePluginNavigate } from '@kite-dev/plugin-sdk/navigation'
 import { updateResource, useResource } from '@kite-dev/plugin-sdk/resources'
-import { ResourceDetailShell, ResourceOverview } from '@kite-dev/plugin-sdk/ui'
+import {
+  ResourceDetailShell,
+  ResourceOverview,
+  ResourceYaml,
+} from '@kite-dev/plugin-sdk/ui'
 
 import { deploymentRef, type Deployment } from '../resources'
 
@@ -477,33 +481,55 @@ export default function DeploymentPage() {
       isLoading={query.isLoading}
       error={query.error}
       onRefresh={query.refetch}
-      onSaveYaml={async (value) => {
-        await updateResource(deploymentRef, name, value, { namespace })
-        await query.refetch()
-      }}
       showDelete
       onDeleted={() => {
         void navigate('deployments')
       }}
-      overview={({ resource }) => (
-        <ResourceOverview
-          resource={deploymentRef}
-          name={name}
-          namespace={namespace}
-          metadata={resource.metadata}
-          fields={[
-            { label: 'Desired replicas', value: resource.spec?.replicas ?? 0 },
-          ]}
-        />
-      )}
+      tabs={[
+        {
+          value: 'overview',
+          label: 'Overview',
+          content: ({ resource }) => (
+            <ResourceOverview
+              resource={deploymentRef}
+              name={name}
+              namespace={namespace}
+              metadata={resource.metadata}
+              fields={[
+                {
+                  label: 'Desired replicas',
+                  value: resource.spec?.replicas ?? 0,
+                },
+              ]}
+            />
+          ),
+        },
+        {
+          value: 'yaml',
+          label: 'YAML',
+          content: ({ resource, refreshKey }) => (
+            <ResourceYaml
+              key={refreshKey}
+              value={resource}
+              onSave={async (value) => {
+                await updateResource(deploymentRef, name, value, { namespace })
+                await query.refetch()
+              }}
+              fillHeight
+            />
+          ),
+        },
+      ]}
     />
   )
 }
 ```
 
-`onSaveYaml` receives the parsed resource object, not a YAML string. Without it, the YAML tab is read-only. Delete and clone actions are disabled by default for plugins; enable them with `showDelete` and `showClone`. `onDeleted` runs after deletion. The describe action can be controlled with `showDescribe`.
+Each tab has `{ value, label, content }`. Its position in `tabs` determines its default order. `value` must be unique within the page. Content can be a React node or a callback receiving `{ resource, refreshKey, onRefresh }`; `resource` is typed from the shell's `data`. Use `refreshKey` as a child's key when it should reset on a manual refresh. The shell does not add overview or YAML tabs automatically. Users can customize tab order and visibility through Kite's tab controls.
 
-Use `preYamlTabs` or `extraTabs` to add tabs with `{ value, label, content }`. Overview and tab content can be React nodes or callbacks receiving the current resource, YAML state, saving state, and refresh callback. `headerActions`, `titleIcon`, and `yamlToolbar` customize the surrounding controls.
+`ResourceYaml<T>` displays a resource object as YAML and manages editing, validation, save, and cancel. `onSave` receives the parsed object and returns a promise; a rejected save displays an error and keeps the draft open. Omit `onSave` for a read-only viewer. `title` and `actions` customize its header, `className` styles its container, and `fillHeight` fills a detail tab. It can be used independently of `ResourceDetailShell`.
+
+Delete and clone actions are disabled by default for plugins; enable them with `showDelete` and `showClone`. `onDeleted` runs after deletion. `showDescribe` controls the describe action; `headerActions` and `titleIcon` customize the resource header.
 
 `ResourceOverview` displays metadata, custom fields, events, and the host's related-resource card. It also accepts children. For CRDs, supply your own `relatedResources` content or pass `relatedResources={null}` to skip the built-in relationship lookup. `ResourceEvents` provides a standalone events table with `resource`, `name`, and optional `namespace` props.
 
@@ -525,8 +551,8 @@ export function ResourceEditor() {
   return (
     <>
       <NamespaceSelector
-        selectedNamespace={namespace}
-        handleNamespaceChange={setNamespace}
+        value={namespace}
+        onChange={setNamespace}
         showAll={false}
         multiple={false}
       />
@@ -783,7 +809,7 @@ Generated projects include these scripts:
 | `pnpm run format`       | Format source files with Prettier                    |
 | `pnpm run format:check` | Check formatting without changing files              |
 | `pnpm run build`        | Check types and build production assets into `dist/` |
-| `pnpm run dev`          | Run `vite build --watch`                             |
+| `pnpm run dev`          | Watch, rebuild, and serve a development plugin       |
 | `pnpm run pack`         | Package the current `dist/` directory                |
 
 The build produces `plugin.json`, Federation metadata and entry files, JavaScript chunks, styles, and an optional README. A root `README.md` is copied to `dist/README.md` and included in the archive. Use complete repository URLs for links to files that are not packaged with the README.
@@ -804,9 +830,6 @@ pnpm exec kite-plugin pack dist workload-tools-0.1.0.tar.gz
 The archive contains the contents of `dist/` at its root, without an enclosing directory. The CLI validates the manifest and package files and prints the archive path and SHA-256 digest. Keep the output archive outside the input directory.
 
 Use Plugin management to install the archive. To distribute through a catalog, publish the archive and its metadata through your catalog's tooling; the catalog can also make the packaged README available for preview.
-
-During development, watch mode rebuilds assets as source files change. Plugin pages run in Kite; the watch command does not serve a standalone application. Repackage and install a new plugin version to update an installed build. Restart the watcher after changing the plugin ID or version.
-
 ## SDK development
 
 Build the SDK from the workspace without a Kite source checkout:

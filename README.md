@@ -28,14 +28,34 @@ cd plugins/my-plugin
 pnpm install
 ```
 
-Edit `plugin.config.tsx` and `src/` to define your pages, menus, and resource extensions. Build and package the plugin:
+Edit `plugin.config.tsx` and `src/` to define your pages, menus, and resource extensions.
+
+To distribute the plugin, build and package it:
 
 ```sh
 pnpm run build
 pnpm run pack
 ```
 
-Install the generated `.tar.gz` archive in Kite through **Avatar → Plugin management → Install from file**.
+## Developing a plugin
+
+Run in the plugin directory:
+
+```sh
+pnpm dev
+```
+
+This runs `kite-plugin dev`, watches the existing Vite build, and serves its output. After the first successful build, the CLI prints:
+
+```text
+Plugin URL: http://localhost:5174/plugin.json
+```
+
+Start Kite with that address:
+
+```sh
+PLUGIN_DEV_URL=http://localhost:5174/plugin.json ./kite
+```
 
 ## Documentation
 

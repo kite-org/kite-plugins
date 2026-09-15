@@ -41,7 +41,9 @@
     "history": "历史记录",
     "rule": "规则 {{number}}",
     "matches": "匹配规则",
-    "filters": "过滤器"
+    "filters": "过滤器",
+    "overview": "概览",
+    "yaml": "YAML"
   },
   "status": {
     "ready": "就绪",

@@ -44,4 +44,6 @@ Set the catalog URL in Kite's general settings to `http://127.0.0.1:18086/catalo
 pnpm --filter gateway-plugin dev
 ```
 
+Set Kite's `PLUGIN_DEV_URL` environment variable to the URL printed by the command. Wait for each rebuild and refresh Kite to see changes, without packaging, installing, or changing the plugin version. See the [development guide](../../packages/plugin-sdk/README.md#developing-a-plugin) for address configuration.
+
 Resource views and menus are declared in `plugin.config.tsx`. Page components use SDK resource hooks and shared UI components. Translations are in `src/locales/`, and plugin styles use CSS Modules with Kite's theme variables.
