@@ -116,7 +116,7 @@ The package is written to `<id>-<version>.tar.gz` in the plugin directory. In Ki
 | -------------- | ---------------------------------------------------------- |
 | `type-check`   | Check TypeScript without producing output.                 |
 | `build`        | Type-check and build the plugin into `dist/`.              |
-| `dev`          | Watch, rebuild, and serve a development plugin.                    |
+| `dev`          | Watch, rebuild, and serve a development plugin.            |
 | `pack`         | Package the existing `dist/` directory. Run `build` first. |
 | `lint`         | Check JavaScript, TypeScript, and React Hooks with ESLint. |
 | `lint:fix`     | Apply automatic ESLint fixes.                              |

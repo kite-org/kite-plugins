@@ -1,6 +1,6 @@
 {
   "name": "@kite-dev/create-plugin-sdk",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Create a Kite frontend plugin",
   "type": "module",
   "license": "Apache-2.0",

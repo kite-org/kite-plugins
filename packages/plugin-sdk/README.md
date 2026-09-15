@@ -830,6 +830,7 @@ pnpm exec kite-plugin pack dist workload-tools-0.1.0.tar.gz
 The archive contains the contents of `dist/` at its root, without an enclosing directory. The CLI validates the manifest and package files and prints the archive path and SHA-256 digest. Keep the output archive outside the input directory.
 
 Use Plugin management to install the archive. To distribute through a catalog, publish the archive and its metadata through your catalog's tooling; the catalog can also make the packaged README available for preview.
+
 ## SDK development
 
 Build the SDK from the workspace without a Kite source checkout:
