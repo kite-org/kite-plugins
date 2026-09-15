@@ -1,16 +1,16 @@
-name: Publish SDK
+name: Publish plugins
 
 on:
   push:
     branches: [main]
     paths:
-      - 'packages/*/package.json'
+      - 'plugins/*/package.json'
 
 permissions:
   contents: read
 
 concurrency:
-  group: publish-sdk
+  group: publish-plugins
   queue: max
 
 jobs:
@@ -53,21 +53,26 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           BEFORE_SHA: ${{ github.event.before }}
-        run: node script/prepare-releases.mjs sdk "$BEFORE_SHA"
+        run: node script/prepare-releases.mjs plugins "$BEFORE_SHA"
 
-  sdk:
+  plugins:
     needs: prepare
     if: ${{ needs.prepare.outputs.tags != '[]' }}
-    name: Publish SDK and creator
+    name: Publish plugins and catalog
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
+      pages: write
       id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Check out pushed commit
         uses: actions/checkout@v7
         with:
           ref: ${{ github.sha }}
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Set up pnpm
@@ -77,15 +82,44 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: '24'
-          registry-url: https://registry.npmjs.org
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
-          package-manager-cache: false
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build, package, and publish SDK and creator
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Publish plugins and merge catalog
         env:
-          SDK_TAG: ${{ fromJSON(needs.prepare.outputs.tags)[0] }}
-        run: node script/publish-sdk.mjs "$SDK_TAG"
+          GH_TOKEN: ${{ github.token }}
+          CATALOG_URL: ${{ steps.pages.outputs.base_url }}/catalog.json
+          PLUGIN_TAGS: ${{ join(fromJSON(needs.prepare.outputs.tags), ' ') }}
+        run: |
+          read -r -a tags <<< "$PLUGIN_TAGS"
+          node script/publish-plugins.mjs "$CATALOG_URL" "${tags[@]}"
+
+      - name: Upload catalog
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist/pages
+
+      - name: Deploy catalog
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Prepare EdgeOne deployment
+        run: node script/mirror-catalog.mjs dist/pages/catalog.json https://kite-plugins.zzde.me/
+
+      - name: Deploy to EdgeOne Makers
+        env:
+          EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
+        run: |
+          : "${EDGEONE_API_TOKEN:?Set the EDGEONE_API_TOKEN repository secret}"
+          pnpm dlx edgeone@1.6.37 makers deploy ./dist/edgeone \
+            --name kite-plugins \
+            --token "$EDGEONE_API_TOKEN" \
+            --env production \
+            --area overseas

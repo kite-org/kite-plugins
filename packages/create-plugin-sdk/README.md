@@ -177,11 +177,10 @@ node --inspect-brk packages/create-plugin-sdk/index.js plugins/my-plugin
 
 The creator and SDK share the same version and are released together. The creator's `workspace:*` dependency becomes the exact SDK version when packed with pnpm.
 
-From a clean, committed workspace root:
+From the workspace root:
 
 ```sh
 ./script/release.sh plugin-sdk 0.0.6
-git push --atomic origin HEAD plugin-sdk-v0.0.6
 ```
 
-The script updates both versions and the lockfile, creates a release commit and tag, and prints the push command. `publish.yml` publishes the SDK followed by the creator; stable versions use `latest`, prereleases use `beta`. See the [publish workflow](../../.github/workflows/publish.yml) for CI configuration.
+The script only updates both package versions. Commit the changes and push or merge them into `main`. The [publish workflow](../../.github/workflows/publish.yml) detects the version change, creates `plugin-sdk-v<version>`, and publishes the SDK followed by the creator. Stable versions use `latest`; prereleases use `beta`. No local tag or separate creator release command is needed.

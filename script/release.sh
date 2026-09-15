@@ -6,7 +6,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 if [ "${1:-}" = "--help" ]; then
   echo "Usage: ./script/release.sh <plugin-sdk|plugin-id> <version>"
-  echo "Prepares a version commit and tag. Push the printed command to publish."
+  echo "Updates package versions. Commit and push to main to publish."
   exit 0
 fi
 if [ "$#" -ne 2 ]; then
@@ -16,16 +16,6 @@ fi
 
 release_target="$1"
 release_version="$2"
-release_tag="$release_target-v$release_version"
-
-if [ -n "$(git status --porcelain)" ]; then
-  echo "Commit your changes before preparing a release." >&2
-  exit 1
-fi
-if git show-ref --verify --quiet "refs/tags/$release_tag"; then
-  echo "Tag $release_tag already exists." >&2
-  exit 1
-fi
 
 if [ "$release_target" = "plugin-sdk" ]; then
   package_dirs=(packages/plugin-sdk packages/create-plugin-sdk)
@@ -74,15 +64,4 @@ for (const { path, pkg } of packages) {
 }
 NODE
 
-pnpm install --lockfile-only --ignore-scripts
-
-package_files=()
-for directory in "${package_dirs[@]}"; do
-  package_files+=("$directory/package.json")
-done
-git add "${package_files[@]}" pnpm-lock.yaml
-git commit -m "release $release_tag"
-git tag -a "$release_tag" -m "version $release_tag"
-
-echo "Release $release_tag prepared. Push the commit and tag to publish:"
-echo "  git push --atomic origin HEAD $release_tag"
+echo "Updated $release_target to $release_version. Commit and push to main to publish."

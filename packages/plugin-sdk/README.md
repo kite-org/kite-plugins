@@ -823,14 +823,13 @@ Run these commands from the `kite-plugins` workspace root. The SDK lives in `pac
 
 Official plugins depend on the SDK with `workspace:^`. Build the SDK before a plugin, or use `pnpm --filter 'cert-manager...' run build` to build a plugin and its workspace dependencies. `pnpm run build` builds the SDK and all plugins in dependency order. Use `pnpm --filter @kite-dev/plugin-sdk run dev` to watch SDK changes, and the plugin's `dev` command to watch its source.
 
-The SDK and creator share one release version. The creator uses `workspace:*`; pnpm converts it to the exact SDK version when packaging for npm. From a clean, committed workspace:
+The SDK and creator share one release version. The creator uses `workspace:*`; pnpm converts it to the exact SDK version when packaging for npm. From the workspace root:
 
 ```sh
 ./script/release.sh plugin-sdk 0.0.6
-git push --atomic origin HEAD plugin-sdk-v0.0.6
 ```
 
-The script updates both versions and the lockfile, then creates the release commit and annotated tag without pushing. The `plugin-sdk-v*` tag selects the SDK job in `publish.yml`: stable versions use `latest`, prereleases use `beta`. Plugin releases use separate `<plugin-id>-v<version>` tags. See the [publish workflow](../../.github/workflows/publish.yml) for CI configuration.
+The script only updates both package versions. Commit the changes and push or merge them into `main`. The [SDK publish workflow](../../.github/workflows/publish.yml) detects version changes, creates `plugin-sdk-v<version>`, and publishes the SDK followed by the creator. Stable versions use `latest`; prereleases use `beta`. The separate [plugin publish workflow](../../.github/workflows/publish-plugins.yml) detects plugin version changes, creates `<plugin-id>-v<version>` tags, and publishes the affected plugins, followed by one Catalog deployment. Changes that leave versions unchanged do not publish releases.
 
 The npm archive contains compiled modules, type declarations, the CLI, README, and license. Pack the creator with `pnpm --dir packages/create-plugin-sdk pack` so pnpm converts its workspace dependency to a registry version.
 
