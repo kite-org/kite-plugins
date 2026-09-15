@@ -1,0 +1,34 @@
+{
+  "name": "@kite-dev/create-plugin-sdk",
+  "version": "0.0.5",
+  "description": "Create a Kite frontend plugin",
+  "type": "module",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kite-org/kite-plugins.git",
+    "directory": "packages/create-plugin-sdk"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "bin": {
+    "create-plugin-sdk": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "template",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "node index.js"
+  },
+  "dependencies": {
+    "@clack/prompts": "1.8.0",
+    "@kite-dev/plugin-sdk": "workspace:*"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
+}

@@ -1,10 +1,10 @@
 # cert-manager for Kite
 
-Manage cert-manager resources from Kite. The plugin adds a dedicated **cert-manager** sidebar group with resource lists, issuance details, YAML views, events, and links between related resources. It uses Kite's current cluster, namespace selection, language, and appearance settings.
+Manage cert-manager resources from Kite. The plugin provides resource lists, issuance details, YAML views, events, and links between related resources on Kite's custom resource pages. It uses Kite's current cluster, namespace selection, language, and appearance settings.
 
 ## Requirements
 
-- A Kite installation matching `^0.16.0` with access to the target cluster.
+- A Kite installation matching `>=0.16.0` with access to the target cluster.
 - cert-manager and its CustomResourceDefinitions installed in that cluster. See the [cert-manager installation guide](https://cert-manager.io/docs/installation/).
 - Permission to view the relevant resources in Kite. Creating, updating, and deleting resources require the corresponding permissions for the selected cluster and namespace. Kite's cluster credentials must also allow those operations in Kubernetes.
 
@@ -16,7 +16,7 @@ A Kite administrator can install the plugin from **Avatar → Plugin management*
 
 1. Open **Plugin catalog** and select **cert-manager** from a configured catalog that provides it.
 2. Install the plugin and confirm that it is enabled under **Installed plugins**.
-3. Select a cluster and open the **cert-manager** sidebar group.
+3. Select a cluster, open **Custom Resource Definitions**, and select a resource in the `cert-manager.io` or `acme.cert-manager.io` API group.
 
 For a downloaded or locally built package, use **Install from file** and select `cert-manager-<version>.tar.gz`.
 
@@ -61,7 +61,7 @@ Certificate renewal times and request approval conditions are displayed as repor
 
 The plugin is a package in the `kite-plugins` pnpm workspace. Use Node.js `^20.19.0` or `>=22.12.0` and the pnpm version specified by the workspace's `packageManager` field.
 
-The plugin uses `@kite-dev/plugin-sdk@0.0.4` from npm. Install dependencies from the `kite-plugins` repository root:
+Install the SDK dependency declared in `package.json` and the other dependencies from the `kite-plugins` repository root:
 
 ```sh
 pnpm install
@@ -71,7 +71,7 @@ Run the plugin's checks, build, and packaging commands from the same directory:
 
 ```sh
 pnpm --filter cert-manager type-check
-pnpm --filter cert-manager build
+pnpm --filter 'cert-manager...' run build
 pnpm --filter cert-manager run pack
 ```
 
@@ -83,13 +83,13 @@ To rebuild when source files change:
 pnpm --filter cert-manager dev
 ```
 
-The watch command rebuilds the plugin output. Restart it after changing the plugin ID or version. To install a changed build, update the version in `package.json`, build and pack again, then install the new package in Kite. For serving packages through a local catalog, see the [workspace README](../../README.md).
+The watch command rebuilds the plugin output. Restart it after changing the plugin ID or version. To install a changed build, update the version in `package.json`, build and pack again, then install the new package in Kite. For distributing packages through a catalog, see the [publishing guide](https://kite.zzde.me/zh/plugins/publishing).
 
 The main source files are:
 
 | File                              | Purpose                                               |
 | --------------------------------- | ----------------------------------------------------- |
-| `plugin.config.tsx`               | Route elements, page titles, and sidebar menus.       |
+| `plugin.config.tsx`               | Custom resource targets and list/detail elements.     |
 | `src/resources.ts`                | Resource references, types, and supported operations. |
 | `src/pages/resource-list.tsx`     | List columns, filters, and creation entry points.     |
 | `src/pages/resource-detail.tsx`   | Resource details, YAML editing, and events.           |

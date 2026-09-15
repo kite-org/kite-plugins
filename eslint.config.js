@@ -12,6 +12,7 @@ export default tseslint.config(
       '**/.vite/**',
       '**/__mf__virtual/**',
       'vendor/**',
+      'packages/create-plugin-sdk/template/**',
     ],
   },
   {
@@ -26,7 +27,10 @@ export default tseslint.config(
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
   },
   {
-    files: ['plugins/*/src/**/*.{js,jsx,mjs,cjs,ts,tsx}'],
+    files: [
+      'plugins/*/src/**/*.{js,jsx,mjs,cjs,ts,tsx}',
+      'packages/plugin-sdk/src/**/*.{ts,tsx}',
+    ],
     languageOptions: { globals: globals.browser },
   },
   {
@@ -38,7 +42,14 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.config.{js,mjs,cjs,ts,tsx}', 'scripts/**/*.{js,mjs,cjs,ts}'],
+    files: [
+      '**/*.config.{js,mjs,cjs,ts,tsx}',
+      'script/**/*.{js,mjs,cjs,ts}',
+      'packages/create-plugin-sdk/index.js',
+      'packages/plugin-sdk/src/build-*.ts',
+      'packages/plugin-sdk/src/cli.ts',
+      'packages/plugin-sdk/src/vite.ts',
+    ],
     languageOptions: { globals: globals.node },
   }
 )

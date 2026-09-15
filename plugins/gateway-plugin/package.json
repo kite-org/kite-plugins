@@ -1,11 +1,11 @@
 {
-  "name": "cert-manager",
-  "displayName": "cert-manager",
-  "version": "0.2.0",
+  "name": "gateway-plugin",
+  "displayName": "Gateway API",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "license": "Apache-2.0",
-  "description": "Manage certificates, issuers, and ACME issuance resources in Kite.",
+  "description": "Manage Kubernetes Gateways and HTTPRoutes in Kite.",
   "author": "Kite",
   "scripts": {
     "type-check": "tsc --noEmit",

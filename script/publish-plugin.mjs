@@ -19,7 +19,7 @@ async function main() {
   const [tag, catalogURL] = process.argv.slice(2)
   if (tag === '--help') {
     console.log(
-      'Usage: GITHUB_REPOSITORY=owner/repo node scripts/publish-plugin.mjs <plugin-id>-v<version> <catalog-url>'
+      'Usage: GITHUB_REPOSITORY=owner/repo node script/publish-plugin.mjs <plugin-id>-v<version> <catalog-url>'
     )
     return
   }
@@ -140,7 +140,7 @@ async function main() {
   } else {
     if (release && !release.draft)
       throw new Error(`Published release ${tag} is missing ${filename}`)
-    execFileSync('pnpm', ['--dir', directory, 'run', 'build'], {
+    execFileSync('pnpm', ['--filter', `${id}...`, 'run', 'build'], {
       stdio: 'inherit',
     })
     execFileSync(

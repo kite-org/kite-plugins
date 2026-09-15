@@ -1,0 +1,11 @@
+{
+  "navigation": {
+    "home": "My Plugin"
+  },
+  "context": {
+    "description": "Current Kite context",
+    "cluster": "Cluster",
+    "namespace": "Namespace",
+    "allNamespaces": "All namespaces"
+  }
+}

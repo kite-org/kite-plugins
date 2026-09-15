@@ -15,10 +15,10 @@ concurrency:
 
 jobs:
   check:
-    name: Check and build plugins
+    name: Check and build workspace
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout plugins
+      - name: Checkout workspace
         uses: actions/checkout@v7
         with:
           persist-credentials: false
@@ -44,9 +44,18 @@ jobs:
 
       - name: Check release scripts
         run: |
-          bash -n scripts/release.sh
-          node --check scripts/publish-plugin.mjs
-          node --check scripts/mirror-catalog.mjs
+          bash -n script/release.sh
+          node --check script/publish-sdk.mjs
+          node --check script/publish-plugin.mjs
+          node --check script/mirror-catalog.mjs
 
       - name: Build and package catalog
         run: pnpm run catalog --base-url=https://example.invalid/
+
+      - name: Check creator CLI
+        run: node packages/create-plugin-sdk/index.js --help
+
+      - name: Check npm packages
+        run: |
+          pnpm --dir packages/plugin-sdk --config.ignore-scripts=true pack --dry-run
+          pnpm --dir packages/create-plugin-sdk --config.ignore-scripts=true pack --dry-run

@@ -8,17 +8,15 @@
     "node": "^20.19.0 || >=22.12.0"
   },
   "scripts": {
+    "create": "pnpm --filter @kite-dev/plugin-sdk run build && node packages/create-plugin-sdk/index.js",
+    "type-check": "pnpm --filter @kite-dev/plugin-sdk run build && pnpm -r run type-check",
     "build": "pnpm -r run build",
-    "type-check": "pnpm -r run type-check",
+    "pack": "pnpm --filter './plugins/*' -r run pack",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "dev": "pnpm --parallel -r run dev",
-    "pack": "pnpm -r run pack",
-    "release": "bash scripts/release.sh",
-    "catalog": "node scripts/generate-catalog.mjs",
-    "catalog:dev": "node scripts/generate-catalog.mjs --base-url=http://127.0.0.1:18086 && python3 -m http.server 18086 --bind 127.0.0.1 --directory dist/catalog"
+    "format": "prettier --write .",
+    "catalog": "node script/generate-catalog.mjs",
+    "catalog:dev": "node script/generate-catalog.mjs --base-url=http://127.0.0.1:18086 && python3 -m http.server 18086 --bind 127.0.0.1 --directory dist/catalog"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

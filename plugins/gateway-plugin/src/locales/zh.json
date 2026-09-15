@@ -1,0 +1,80 @@
+{
+  "resources": {
+    "gateways": "Gateways",
+    "gateway": "Gateway",
+    "httproutes": "HTTPRoutes",
+    "httproute": "HTTPRoute"
+  },
+  "fields": {
+    "name": "名称",
+    "namespace": "命名空间",
+    "status": "状态",
+    "gatewayClass": "Gateway Class",
+    "addresses": "地址",
+    "hostnames": "主机名",
+    "hostname": "主机名",
+    "created": "创建时间",
+    "protocol": "协议",
+    "port": "端口",
+    "tls": "TLS",
+    "attachedRoutes": "已绑定路由",
+    "type": "类型",
+    "kind": "资源类型",
+    "reason": "原因",
+    "message": "消息",
+    "method": "请求方法",
+    "path": "路径",
+    "headers": "请求头",
+    "queryParams": "查询参数",
+    "weight": "权重",
+    "operation": "操作",
+    "operator": "操作人",
+    "actions": "操作"
+  },
+  "sections": {
+    "listeners": "监听器",
+    "parents": "父资源",
+    "conditions": "状态条件",
+    "related": "关联资源",
+    "backends": "后端",
+    "events": "事件",
+    "history": "历史记录",
+    "rule": "规则 {{number}}",
+    "matches": "匹配规则",
+    "filters": "过滤器"
+  },
+  "status": {
+    "ready": "就绪",
+    "notReady": "未就绪",
+    "pending": "等待状态更新"
+  },
+  "actions": {
+    "create": "创建",
+    "apply": "应用",
+    "applying": "正在应用…",
+    "cancel": "取消",
+    "previous": "上一页",
+    "next": "下一页",
+    "viewYaml": "查看 YAML"
+  },
+  "list": {
+    "empty": "所选命名空间中没有资源。"
+  },
+  "common": {
+    "none": "无",
+    "noStatus": "尚未上报状态。",
+    "loading": "加载中…"
+  },
+  "apply": {
+    "title": "创建 {{resource}}",
+    "description": "应用前请修改 YAML 中的命名空间和资源引用。",
+    "failed": "应用资源失败。"
+  },
+  "history": {
+    "empty": "暂无历史记录。",
+    "success": "成功",
+    "failed": "失败",
+    "previous": "变更前",
+    "current": "变更后"
+  }
+}

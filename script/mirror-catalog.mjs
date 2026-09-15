@@ -14,7 +14,7 @@ async function main() {
   const [catalogPath, baseURL] = process.argv.slice(2)
   if (catalogPath === '--help') {
     console.log(
-      'Usage: node scripts/mirror-catalog.mjs <catalog.json> <mirror-base-url>'
+      'Usage: node script/mirror-catalog.mjs <catalog.json> <mirror-base-url>'
     )
     return
   }

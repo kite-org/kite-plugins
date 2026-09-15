@@ -1,25 +1,18 @@
-name: Publish plugin
+name: Publish
 
 on:
   push:
     tags: ['*-v*']
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Existing plugin tag, for example cert-manager-v0.1.3'
-        required: true
-        type: string
 
 permissions:
   contents: read
 
-concurrency:
-  group: publish-plugin-catalog
-  queue: max
-
 jobs:
-  publish:
-    if: ${{ !github.event.deleted }}
+  plugin:
+    if: ${{ !github.event.deleted && !startsWith(github.ref_name, 'plugin-sdk-v') }}
+    concurrency:
+      group: publish-plugin-catalog
+      queue: max
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -28,13 +21,10 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    env:
-      PLUGIN_TAG: ${{ inputs.tag || github.ref_name }}
     steps:
       - name: Check out plugin release
         uses: actions/checkout@v7
         with:
-          ref: ${{ env.PLUGIN_TAG }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -65,7 +55,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           CATALOG_URL: ${{ steps.pages.outputs.base_url }}/catalog.json
-        run: node scripts/publish-plugin.mjs "$PLUGIN_TAG" "$CATALOG_URL"
+        run: node script/publish-plugin.mjs "$GITHUB_REF_NAME" "$CATALOG_URL"
 
       - name: Upload catalog
         uses: actions/upload-pages-artifact@v4
@@ -76,11 +66,8 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Mirror packages and README files
-        run: |
-          # Use the workflow revision's script when republishing an older tag.
-          git show "${GITHUB_SHA}:scripts/mirror-catalog.mjs" > scripts/mirror-catalog.mjs
-          node scripts/mirror-catalog.mjs dist/pages/catalog.json https://kite-plugins.zzde.me/
+      - name: Prepare EdgeOne deployment
+        run: node script/mirror-catalog.mjs dist/pages/catalog.json https://kite-plugins.zzde.me/
 
       - name: Deploy to EdgeOne Makers
         env:
@@ -92,3 +79,42 @@ jobs:
             --token "$EDGEONE_API_TOKEN" \
             --env production \
             --area overseas
+
+  sdk:
+    if: ${{ !github.event.deleted && startsWith(github.ref_name, 'plugin-sdk-v') }}
+    concurrency:
+      group: publish-sdk
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out SDK release
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint SDK and creator
+        run: pnpm exec eslint packages/plugin-sdk packages/create-plugin-sdk
+
+      - name: Check formatting
+        run: pnpm exec prettier --check packages/plugin-sdk packages/create-plugin-sdk
+
+      - name: Build, package, and publish SDK and creator
+        run: node script/publish-sdk.mjs "$GITHUB_REF_NAME"

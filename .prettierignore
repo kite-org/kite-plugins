@@ -5,3 +5,6 @@
 **/__mf__virtual/
 vendor/
 pnpm-lock.yaml
+**/pnpm-lock.yaml
+*.tgz
+*.tar.gz

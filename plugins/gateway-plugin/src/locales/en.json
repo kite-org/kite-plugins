@@ -1,0 +1,80 @@
+{
+  "resources": {
+    "gateways": "Gateways",
+    "gateway": "Gateway",
+    "httproutes": "HTTP Routes",
+    "httproute": "HTTPRoute"
+  },
+  "fields": {
+    "name": "Name",
+    "namespace": "Namespace",
+    "status": "Status",
+    "gatewayClass": "Gateway Class",
+    "addresses": "Addresses",
+    "hostnames": "Hostnames",
+    "hostname": "Hostname",
+    "created": "Created",
+    "protocol": "Protocol",
+    "port": "Port",
+    "tls": "TLS",
+    "attachedRoutes": "Attached routes",
+    "type": "Type",
+    "kind": "Kind",
+    "reason": "Reason",
+    "message": "Message",
+    "method": "Method",
+    "path": "Path",
+    "headers": "Headers",
+    "queryParams": "Query parameters",
+    "weight": "Weight",
+    "operation": "Operation",
+    "operator": "Operator",
+    "actions": "Actions"
+  },
+  "sections": {
+    "listeners": "Listeners",
+    "parents": "Parents",
+    "conditions": "Conditions",
+    "related": "Related",
+    "backends": "Backends",
+    "events": "Events",
+    "history": "History",
+    "rule": "Rule {{number}}",
+    "matches": "Matches",
+    "filters": "Filters"
+  },
+  "status": {
+    "ready": "Ready",
+    "notReady": "Not ready",
+    "pending": "Pending"
+  },
+  "actions": {
+    "create": "Create",
+    "apply": "Apply",
+    "applying": "Applying…",
+    "cancel": "Cancel",
+    "previous": "Previous",
+    "next": "Next",
+    "viewYaml": "View YAML"
+  },
+  "list": {
+    "empty": "No resources found in the selected namespace."
+  },
+  "common": {
+    "none": "None",
+    "noStatus": "No status reported yet.",
+    "loading": "Loading…"
+  },
+  "apply": {
+    "title": "Create {{resource}}",
+    "description": "Edit the namespace and references in this manifest before applying it.",
+    "failed": "Failed to apply resource."
+  },
+  "history": {
+    "empty": "No history recorded.",
+    "success": "Succeeded",
+    "failed": "Failed",
+    "previous": "Before change",
+    "current": "After change"
+  }
+}

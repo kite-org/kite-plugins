@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { PluginLink } from '@kite-dev/plugin-sdk/navigation'
+import { ResourceLink as KiteResourceLink } from '@kite-dev/plugin-sdk/navigation'
 import {
   Badge,
   Card,
@@ -172,18 +172,17 @@ export function ResourceLink({
   children?: ReactNode
 }) {
   const definition = resources[type]
-  const params: Record<string, string> =
-    definition.reference.scope === 'Cluster'
-      ? { name }
-      : { name, namespace: namespace! }
   return (
-    <PluginLink
+    <KiteResourceLink
       className={styles.link}
-      route={definition.detailRoute}
-      params={params}
+      resource={definition.reference}
+      name={name}
+      namespace={
+        definition.reference.scope === 'Cluster' ? undefined : namespace
+      }
     >
       {children ?? name}
-    </PluginLink>
+    </KiteResourceLink>
   )
 }
 

@@ -14,21 +14,9 @@ export interface Condition {
   observedGeneration?: number
 }
 
-export interface Metadata extends ResourceMetadata {
-  generation?: number
-  deletionTimestamp?: string
-  ownerReferences?: {
-    apiVersion: string
-    kind: string
-    name: string
-    uid: string
-    controller?: boolean
-  }[]
-}
-
 interface ResourceBase {
   apiVersion: string
-  metadata: Metadata
+  metadata: ResourceMetadata
   status?: { conditions?: Condition[] }
 }
 
@@ -219,7 +207,6 @@ interface ResourceDefinition {
   label: TranslationKey
   singular: TranslationKey
   reference: ResourceReference
-  detailRoute: string
   editable: boolean
 }
 
@@ -229,7 +216,6 @@ export const resources: Record<ResourceType, ResourceDefinition> = {
     label: 'resources.certificates',
     singular: 'resources.certificate',
     reference: { group: 'cert-manager.io', resource: 'certificates' },
-    detailRoute: 'certificate',
     editable: true,
   },
   certificaterequests: {
@@ -237,7 +223,6 @@ export const resources: Record<ResourceType, ResourceDefinition> = {
     label: 'resources.certificateRequests',
     singular: 'resources.certificateRequest',
     reference: { group: 'cert-manager.io', resource: 'certificaterequests' },
-    detailRoute: 'certificate-request',
     editable: false,
   },
   issuers: {
@@ -245,7 +230,6 @@ export const resources: Record<ResourceType, ResourceDefinition> = {
     label: 'resources.issuers',
     singular: 'resources.issuer',
     reference: { group: 'cert-manager.io', resource: 'issuers' },
-    detailRoute: 'issuer',
     editable: true,
   },
   clusterissuers: {
@@ -257,7 +241,6 @@ export const resources: Record<ResourceType, ResourceDefinition> = {
       resource: 'clusterissuers',
       scope: 'Cluster',
     },
-    detailRoute: 'cluster-issuer',
     editable: true,
   },
   orders: {
@@ -265,7 +248,6 @@ export const resources: Record<ResourceType, ResourceDefinition> = {
     label: 'resources.orders',
     singular: 'resources.order',
     reference: { group: 'acme.cert-manager.io', resource: 'orders' },
-    detailRoute: 'order',
     editable: false,
   },
   challenges: {
@@ -273,7 +255,6 @@ export const resources: Record<ResourceType, ResourceDefinition> = {
     label: 'resources.challenges',
     singular: 'resources.challenge',
     reference: { group: 'acme.cert-manager.io', resource: 'challenges' },
-    detailRoute: 'challenge',
     editable: false,
   },
 }

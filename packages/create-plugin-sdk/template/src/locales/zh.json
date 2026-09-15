@@ -1,0 +1,11 @@
+{
+  "navigation": {
+    "home": "My Plugin"
+  },
+  "context": {
+    "description": "当前 Kite 上下文",
+    "cluster": "集群",
+    "namespace": "命名空间",
+    "allNamespaces": "全部命名空间"
+  }
+}

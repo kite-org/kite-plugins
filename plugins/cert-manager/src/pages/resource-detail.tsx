@@ -1,10 +1,11 @@
-import { useParams, usePluginNavigate } from '@kite-dev/plugin-sdk/navigation'
+import { resolveResourcePath } from '@kite-dev/plugin-sdk/navigation'
 import { updateResource, useResource } from '@kite-dev/plugin-sdk/resources'
 import {
   ResourceDetailShell,
   ResourceEvents,
   ResourceOverview,
 } from '@kite-dev/plugin-sdk/ui'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import {
   ConditionBadge,
@@ -568,7 +569,7 @@ export default function ResourceDetail({ type }: { type: ResourceType }) {
     namespace: string
     name: string
   }>()
-  const navigate = usePluginNavigate()
+  const navigate = useNavigate()
   const definition = resources[type]
   const query = useResource<CertManagerResource>(definition.reference, name, {
     namespace,
@@ -597,7 +598,7 @@ export default function ResourceDetail({ type }: { type: ResourceType }) {
       showDelete
       showClone={false}
       onDeleted={() => {
-        void navigate(type)
+        void navigate(resolveResourcePath(definition.reference))
       }}
       overview={({ resource }) => (
         <DetailOverview type={type} resource={resource} />
