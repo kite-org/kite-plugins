@@ -45,7 +45,6 @@ jobs:
       - name: Check release scripts
         run: |
           bash -n script/release.sh
-          node --check script/prepare-releases.mjs
           node --check script/publish-sdk.mjs
           node --check script/publish-plugins.mjs
           node --check script/mirror-catalog.mjs

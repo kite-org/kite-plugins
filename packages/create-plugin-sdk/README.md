@@ -185,4 +185,4 @@ From the workspace root:
 ./script/release.sh plugin-sdk 0.0.6
 ```
 
-The script only updates both package versions. Commit the changes and push or merge them into `main`. The [publish workflow](../../.github/workflows/publish.yml) detects the version change, creates `plugin-sdk-v<version>`, and publishes the SDK followed by the creator. Stable versions use `latest`; prereleases use `beta`. No local tag or separate creator release command is needed.
+The script only updates both package versions. Commit the changes and push or merge them into `main`. On every push to `main`, the [publish workflow](../../.github/workflows/publish.yml) checks the SDK and creator versions separately against npm. It skips published versions and publishes missing versions with a `plugin-sdk-v<version>` tag. Stable versions use `latest`; prereleases use `beta`. No local tag or separate creator release command is needed.

@@ -3,8 +3,7 @@ name: Publish SDK
 on:
   push:
     branches: [main]
-    paths:
-      - 'packages/*/package.json'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,60 +13,19 @@ concurrency:
   queue: max
 
 jobs:
-  prepare:
-    name: Detect versions and create tags
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    outputs:
-      tags: ${{ steps.releases.outputs.tags }}
-    steps:
-      - name: Check out pushed commit
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.sha }}
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v6
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: '24'
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Lint
-        run: pnpm run lint
-
-      - name: Check formatting
-        run: pnpm run format:check
-
-      - name: Prepare releases
-        id: releases
-        env:
-          GH_TOKEN: ${{ github.token }}
-          BEFORE_SHA: ${{ github.event.before }}
-        run: node script/prepare-releases.mjs sdk "$BEFORE_SHA"
-
   sdk:
-    needs: prepare
-    if: ${{ needs.prepare.outputs.tags != '[]' }}
+    if: ${{ github.ref == 'refs/heads/main' }}
     name: Publish SDK and creator
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       id-token: write
     steps:
       - name: Check out pushed commit
         uses: actions/checkout@v7
         with:
           ref: ${{ github.sha }}
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Set up pnpm
@@ -85,7 +43,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Check formatting
+        run: pnpm run format:check
+
       - name: Build, package, and publish SDK and creator
         env:
-          SDK_TAG: ${{ fromJSON(needs.prepare.outputs.tags)[0] }}
-        run: node script/publish-sdk.mjs "$SDK_TAG"
+          GH_TOKEN: ${{ github.token }}
+        run: node script/publish-sdk.mjs

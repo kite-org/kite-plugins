@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { rcompare, valid } from 'semver'
@@ -16,110 +16,50 @@ function releaseIdentity(tag) {
 }
 
 async function main() {
-  const [catalogURL, ...tags] = process.argv.slice(2)
-  if (catalogURL === '--help') {
+  if (process.argv[2] === '--help') {
     console.log(
-      'Usage: GITHUB_REPOSITORY=owner/repo node script/publish-plugins.mjs <catalog-url> <plugin-id>-v<version>...'
+      'Usage: GITHUB_REPOSITORY=owner/repo node script/publish-plugins.mjs'
     )
     return
   }
   const repository = process.env.GITHUB_REPOSITORY
-  if (!catalogURL || tags.length === 0 || !repository) {
-    throw new Error(
-      'A catalog URL, stable plugin tags, and GITHUB_REPOSITORY are required'
-    )
-  }
-  const identities = tags.map((tag) => {
-    const identity = releaseIdentity(tag)
-    if (!identity) throw new Error(`Invalid plugin release tag: ${tag}`)
-    return { ...identity, tag }
-  })
+  if (!repository) throw new Error('GITHUB_REPOSITORY is required')
   process.chdir(root)
-  const commit = execFileSync('git', ['rev-parse', 'HEAD'], {
-    encoding: 'utf8',
-  }).trim()
-  for (const { id, version, tag } of identities) {
-    const pkg = JSON.parse(
-      await readFile(resolve(root, 'plugins', id, 'package.json'), 'utf8')
-    )
-    if (pkg.name !== id || pkg.version !== version) {
-      throw new Error(`Tag ${tag} must match plugins/${id}/package.json`)
+  const git = (...args) =>
+    execFileSync('git', args, { encoding: 'utf8' }).trim()
+  const commit = git('rev-parse', 'HEAD')
+  const existingTags = new Set(git('tag', '--list').split('\n'))
+  const plugins = []
+  for (const directory of await readdir('plugins', { withFileTypes: true })) {
+    if (!directory.isDirectory()) continue
+    const path = `plugins/${directory.name}/package.json`
+    const pkg = JSON.parse(await readFile(path, 'utf8'))
+    const tag = `${pkg.name}-v${pkg.version}`
+    const identity = releaseIdentity(tag)
+    if (!identity || identity.id !== directory.name) {
+      throw new Error(`Invalid plugin name or release version in ${path}`)
     }
-    const tagged = execFileSync('git', ['rev-parse', `${tag}^{commit}`], {
-      encoding: 'utf8',
-    }).trim()
-    if (tagged !== commit)
-      throw new Error(`${tag} must point to the checked-out commit`)
+    plugins.push({ ...identity, tag })
   }
-
-  const releases = JSON.parse(
-    execFileSync(
-      'gh',
-      [
-        'api',
-        '--paginate',
-        '--slurp',
-        `repos/${repository}/releases?per_page=100`,
-      ],
-      { encoding: 'utf8' }
-    )
-  ).flat()
-  const previous = releases.filter(
-    (release) =>
-      !release.draft &&
-      !release.prerelease &&
-      !tags.includes(release.tag_name) &&
-      releaseIdentity(release.tag_name)
-  )
-  const address = new URL(catalogURL)
-  address.searchParams.set('release', `${commit}-${Date.now()}`)
-  const response = await fetch(address, {
-    headers: { 'Cache-Control': 'no-cache' },
-    signal: AbortSignal.timeout(30_000),
-  })
-  let catalog
-  if (response.status === 404 && previous.length === 0) {
-    catalog = { plugins: [] }
-  } else if (response.ok) {
-    catalog = await response.json()
-  } else {
-    throw new Error(
-      `Cannot read the existing catalog: HTTP ${response.status}; refusing to replace it`
-    )
-  }
-  if (!Array.isArray(catalog.plugins))
-    throw new Error('Invalid catalog: plugins must be an array')
-  for (const release of previous) {
-    const published = releaseIdentity(release.tag_name)
-    const filename = `${published.id}-${published.version}.tar.gz`
-    if (
-      !release.assets.some(
-        (asset) => asset.name === filename && asset.state === 'uploaded'
+  const listReleases = () =>
+    JSON.parse(
+      execFileSync(
+        'gh',
+        [
+          'api',
+          '--paginate',
+          '--slurp',
+          `repos/${repository}/releases?per_page=100`,
+        ],
+        { encoding: 'utf8' }
       )
-    ) {
-      throw new Error(
-        `Published release ${release.tag_name} is missing ${filename}`
-      )
-    }
-    if (
-      !catalog.plugins.some(
-        (plugin) =>
-          plugin.id === published.id && plugin.version === published.version
-      )
-    ) {
-      throw new Error(
-        `Catalog is missing ${release.tag_name}; retry after Pages updates, or rerun that release's workflow first`
-      )
-    }
-  }
-
-  const output = resolve(root, 'dist/release')
-  await mkdir(output, { recursive: true })
-  for (const { id, version, tag } of identities) {
-    const directory = resolve(root, 'plugins', id)
-    const filename = `${id}-${version}.tar.gz`
-    const archive = resolve(output, filename)
+    ).flat()
+  let releases = listReleases()
+  const pending = []
+  for (const plugin of plugins) {
+    const { id, version, tag } = plugin
     const release = releases.find((item) => item.tag_name === tag)
+    const filename = `${id}-${version}.tar.gz`
     const asset = release?.assets.find((item) => item.name === filename)
     if (release?.prerelease) throw new Error(`${tag} must be a stable release`)
     if (asset && asset.state !== 'uploaded') {
@@ -127,106 +67,148 @@ async function main() {
         `Release ${tag} has an incomplete asset; remove the unfinished draft upload before retrying`
       )
     }
-    if (asset) {
-      execFileSync(
-        'gh',
-        [
-          'release',
-          'download',
-          tag,
-          '--repo',
-          repository,
-          '--pattern',
-          filename,
-          '--dir',
-          output,
-          '--clobber',
-        ],
-        { stdio: 'inherit' }
-      )
-    } else {
-      if (release && !release.draft)
+    if (release && !release.draft) {
+      if (!asset)
         throw new Error(`Published release ${tag} is missing ${filename}`)
+      console.log(`${id}@${version} is already published; skipping`)
+      continue
+    }
+    if (
+      !asset &&
+      existingTags.has(tag) &&
+      git('rev-parse', `${tag}^{commit}`) !== commit
+    ) {
+      throw new Error(
+        `${tag} already points to another commit; increase the version`
+      )
+    }
+    pending.push({ ...plugin, release, asset, filename })
+  }
+
+  const output = resolve(root, 'dist/release')
+  await mkdir(output, { recursive: true })
+  for (const { id, version, tag, release, asset, filename } of pending) {
+    const directory = resolve(root, 'plugins', id)
+    const archive = resolve(output, filename)
+    if (!asset) {
       execFileSync('pnpm', ['--filter', `${id}...`, 'run', 'build'], {
         stdio: 'inherit',
       })
       execFileSync(
         'pnpm',
         ['--dir', directory, 'exec', 'kite-plugin', 'pack', 'dist', archive],
-        { stdio: 'inherit' }
+        {
+          stdio: 'inherit',
+        }
       )
+      const manifest = JSON.parse(
+        execFileSync('tar', ['-xOf', archive, 'plugin.json'], {
+          encoding: 'utf8',
+        })
+      )
+      if (manifest.id !== id || manifest.version !== version) {
+        throw new Error('Plugin archive does not match package.json')
+      }
+      if (!release) {
+        execFileSync(
+          'gh',
+          [
+            'release',
+            'create',
+            tag,
+            archive,
+            '--repo',
+            repository,
+            '--target',
+            commit,
+            '--draft',
+            '--title',
+            `${id} ${version}`,
+            '--notes',
+            `Kite plugin ${id} ${version}.`,
+          ],
+          { stdio: 'inherit' }
+        )
+      } else {
+        execFileSync(
+          'gh',
+          ['release', 'upload', tag, archive, '--repo', repository],
+          { stdio: 'inherit' }
+        )
+      }
     }
+    execFileSync(
+      'gh',
+      [
+        'release',
+        'edit',
+        tag,
+        '--repo',
+        repository,
+        '--draft=false',
+        '--latest=false',
+      ],
+      {
+        stdio: 'inherit',
+      }
+    )
+    console.log(`Published ${id}@${version}`)
+  }
+
+  if (pending.length > 0) releases = listReleases()
+  const catalog = { plugins: [] }
+  for (const release of releases) {
+    const identity = releaseIdentity(release.tag_name)
+    if (release.draft || release.prerelease || !identity) continue
+    const { id, version } = identity
+    const tag = release.tag_name
+    const filename = `${id}-${version}.tar.gz`
+    if (
+      !release.assets.some(
+        (asset) => asset.name === filename && asset.state === 'uploaded'
+      )
+    ) {
+      throw new Error(`Published release ${tag} is missing ${filename}`)
+    }
+    execFileSync(
+      'gh',
+      [
+        'release',
+        'download',
+        tag,
+        '--repo',
+        repository,
+        '--pattern',
+        filename,
+        '--dir',
+        output,
+        '--clobber',
+      ],
+      { stdio: 'inherit' }
+    )
+    const archive = resolve(output, filename)
     const manifest = JSON.parse(
       execFileSync('tar', ['-xOf', archive, 'plugin.json'], {
         encoding: 'utf8',
       })
     )
-    if (manifest.id !== id || manifest.version !== version)
-      throw new Error('Plugin archive does not match the release tag')
+    if (manifest.id !== id || manifest.version !== version) {
+      throw new Error(`Plugin archive does not match ${tag}`)
+    }
     const files = execFileSync('tar', ['-tzf', archive], {
       encoding: 'utf8',
     }).split('\n')
     const readmeURL = files.includes('README.md')
-      ? `https://raw.githubusercontent.com/${repository}/${commit}/plugins/${id}/README.md`
+      ? `https://raw.githubusercontent.com/${repository}/${tag}/plugins/${id}/README.md`
       : undefined
-    const entry = catalogEntry(
-      manifest,
-      await readFile(archive),
-      `https://github.com/${repository}/releases/download/${tag}/${filename}`,
-      readmeURL
+    catalog.plugins.push(
+      catalogEntry(
+        manifest,
+        await readFile(archive),
+        `https://github.com/${repository}/releases/download/${tag}/${filename}`,
+        readmeURL
+      )
     )
-    const existing = catalog.plugins.find(
-      (plugin) => plugin.id === id && plugin.version === version
-    )
-    if (existing && existing.sha256 !== entry.sha256) {
-      throw new Error(
-        `${id}@${version} already has a different checksum; publish a new version`
-      )
-    }
-
-    if (!release) {
-      execFileSync(
-        'gh',
-        [
-          'release',
-          'create',
-          tag,
-          archive,
-          '--repo',
-          repository,
-          '--verify-tag',
-          '--draft',
-          '--title',
-          `${id} ${version}`,
-          '--notes',
-          `Kite plugin ${id} ${version}.`,
-        ],
-        { stdio: 'inherit' }
-      )
-    } else if (release.draft && !asset) {
-      execFileSync(
-        'gh',
-        ['release', 'upload', tag, archive, '--repo', repository],
-        { stdio: 'inherit' }
-      )
-    }
-    if (!release || release.draft) {
-      execFileSync(
-        'gh',
-        [
-          'release',
-          'edit',
-          tag,
-          '--repo',
-          repository,
-          '--draft=false',
-          '--latest=false',
-        ],
-        { stdio: 'inherit' }
-      )
-    }
-
-    if (!existing) catalog.plugins.push(entry)
   }
   catalog.plugins.sort(
     (a, b) => a.id.localeCompare(b.id) || rcompare(a.version, b.version)
@@ -237,9 +219,7 @@ async function main() {
     resolve(pages, 'catalog.json'),
     `${JSON.stringify(catalog, null, 2)}\n`
   )
-  console.log(
-    `Published ${tags.join(', ')}; catalog ready at ${resolve(pages, 'catalog.json')}`
-  )
+  console.log(`Catalog ready at ${resolve(pages, 'catalog.json')}`)
 }
 
 main().catch((error) => {

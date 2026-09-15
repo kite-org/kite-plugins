@@ -853,7 +853,7 @@ The SDK and creator share one release version. The creator uses `workspace:*`; p
 ./script/release.sh plugin-sdk 0.0.6
 ```
 
-The script only updates both package versions. Commit the changes and push or merge them into `main`. The [SDK publish workflow](../../.github/workflows/publish.yml) detects version changes, creates `plugin-sdk-v<version>`, and publishes the SDK followed by the creator. Stable versions use `latest`; prereleases use `beta`. The separate [plugin publish workflow](../../.github/workflows/publish-plugins.yml) detects plugin version changes, creates `<plugin-id>-v<version>` tags, and publishes the affected plugins, followed by one Catalog deployment. Changes that leave versions unchanged do not publish releases.
+The script only updates both package versions. Commit the changes and push or merge them into `main`. On every push to `main`, the [SDK publish workflow](../../.github/workflows/publish.yml) checks each package version against npm, skips published versions, and publishes missing versions with a `plugin-sdk-v<version>` tag. Stable versions use `latest`; prereleases use `beta`. The separate [plugin publish workflow](../../.github/workflows/publish-plugins.yml) checks each plugin version against GitHub Releases and publishes missing versions with `<plugin-id>-v<version>` tags. It then generates the Catalog from published release archives and deploys it to GitHub Pages and EdgeOne. Both workflows can also be run manually on `main`; reruns skip published packages and can retry Catalog deployment.
 
 The npm archive contains compiled modules, type declarations, the CLI, README, and license. Pack the creator with `pnpm --dir packages/create-plugin-sdk pack` so pnpm converts its workspace dependency to a registry version.
 
