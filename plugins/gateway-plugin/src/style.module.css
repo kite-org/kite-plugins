@@ -93,6 +93,9 @@
 .table tbody {
   border-top: 1px solid var(--border);
 }
+.conditionValue {
+  white-space: nowrap;
+}
 .code {
   white-space: pre-wrap;
   overflow-wrap: anywhere;

@@ -41,7 +41,7 @@ import type {
 } from './layout'
 import { layoutMap } from './layout'
 import styles from './map.module.css'
-import { definitions, type MapResource, type Relation } from './model'
+import { definitions, isIssue, type MapResource, type Relation } from './model'
 
 export function ResourceStatus({ resource }: { resource: MapResource }) {
   const { t } = useTranslation()
@@ -119,21 +119,22 @@ const ResourceSummary = memo(function ResourceSummary({
   data,
 }: NodeProps<SummaryNode>) {
   const { t } = useTranslation()
-  const Icon =
-    resourceIcons[
-      data.kind === 'helm'
-        ? 'secrets'
-        : data.kind === 'history'
-          ? 'replicasets'
-          : 'pods'
-    ]
+  const Icon = resourceIcons[data.members[0].type]
   const summary = t(`summary.${data.kind}`, { count: data.members.length })
+  const title = data.kind === 'helm' ? data.owner : summary
+  const issues = data.members.filter(isIssue).length
+  const detail = data.kind === 'helm' ? summary : data.owner
   return (
     <button
       className={`${styles.resource} ${styles.summaryCard} nodrag nopan`}
       onClick={data.onToggle}
       aria-expanded={data.expanded}
-      aria-label={`${t(data.expanded ? 'actions.collapse' : 'actions.expand')} ${t(`summary.${data.kind}`, { count: data.members.length })} · ${data.owner}`}
+      aria-label={`${t(data.expanded ? 'actions.collapse' : 'actions.expand')} ${summary} · ${data.owner}`}
+      data-tone={
+        data.members.some((resource) => resource.tone === 'error')
+          ? 'error'
+          : undefined
+      }
     >
       <Handle type="target" position={Position.Left} />
       <div className={styles.resourceHeading}>
@@ -141,24 +142,23 @@ const ResourceSummary = memo(function ResourceSummary({
         <span className={styles.kind}>
           {data.kind === 'helm'
             ? `Helm · ${data.members[0].namespace}`
-            : data.kind === 'history'
-              ? 'ReplicaSet'
-              : 'Pod'}
+            : data.members[0].kind}
         </span>
         <span className={styles.summaryCount}>{data.members.length}</span>
       </div>
-      <span
-        className={styles.resourceName}
-        title={data.kind === 'helm' ? data.owner : summary}
-      >
-        {data.kind === 'helm' ? data.owner : summary}
+      <span className={styles.resourceName} title={title}>
+        {title}
       </span>
-      <span
-        className={styles.resourceDetail}
-        title={data.kind === 'helm' ? summary : data.owner}
-      >
-        {data.kind === 'helm' ? summary : data.owner}
-      </span>
+      {issues > 0 ? (
+        <span className={styles.issueCount}>
+          <IconAlertCircle size={12} />
+          {t('issues', { count: issues })}
+        </span>
+      ) : (
+        <span className={styles.resourceDetail} title={detail}>
+          {detail}
+        </span>
+      )}
       <span className={styles.summaryAction}>
         {t(data.expanded ? 'actions.collapse' : 'actions.expand')}
         {data.expanded ? (

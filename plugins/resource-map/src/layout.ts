@@ -11,7 +11,7 @@ export type ResourceNode = Node<
 >
 export type SummaryNode = Node<
   {
-    kind: 'history' | 'replicas' | 'helm'
+    kind: 'history' | 'replicas' | 'helm' | 'standalone'
     owner: string
     members: MapResource[]
     expanded: boolean
@@ -138,9 +138,37 @@ export async function layoutMap(
     summary.members.push(resource)
     summaries.set(id, summary)
   }
+  const connected = new Set<string>()
+  for (const edge of allRelations) {
+    connected.add(edge.source)
+    // A bound PV does not mean the claim is used by a Pod.
+    if (
+      byId.get(edge.source)!.type !== 'persistentvolumes' ||
+      byId.get(edge.target)!.type !== 'persistentvolumeclaims'
+    )
+      connected.add(edge.target)
+  }
+  for (const resource of resources) {
+    if (resource.helmRelease || connected.has(resource.id)) continue
+    const id = `summary:${membership.get(resource.id)}:${resource.type}:standalone`
+    const summary = summaries.get(id) ?? {
+      kind: 'standalone',
+      owner: resource.kind,
+      members: [],
+      expanded: false,
+      onToggle: () => {},
+    }
+    summary.members.push(resource)
+    summaries.set(id, summary)
+  }
   for (const [id, summary] of summaries) {
     if (
-      summary.members.length < (summary.kind === 'replicas' ? 5 : 2) ||
+      summary.members.length <
+        (summary.kind === 'replicas'
+          ? 5
+          : summary.kind === 'standalone'
+            ? 4
+            : 2) ||
       revealMatches
     ) {
       summaries.delete(id)

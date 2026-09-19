@@ -109,7 +109,8 @@
     "folded": "{{count}} 个资源已折叠",
     "overview": "资源概览",
     "total": "个资源",
-    "helm": "{{count}} 个 Helm 发布版本"
+    "helm": "{{count}} 个 Helm 发布版本",
+    "standalone": "{{count}} 个未关联资源"
   },
   "card": {
     "restarts": "重启 {{count}} 次"

@@ -151,13 +151,15 @@ export function Conditions({
         <tbody>
           {conditions.map((condition) => (
             <tr key={condition.type}>
-              <td>{condition.type}</td>
-              <td>
+              <td className={styles.conditionValue}>{condition.type}</td>
+              <td className={styles.conditionValue}>
                 {condition.observedGeneration !== generation
                   ? t('status.pending')
                   : condition.status}
               </td>
-              <td>{condition.reason || '—'}</td>
+              <td className={styles.conditionValue}>
+                {condition.reason || '—'}
+              </td>
               <td>{condition.message || '—'}</td>
             </tr>
           ))}

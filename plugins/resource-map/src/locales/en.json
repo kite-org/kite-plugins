@@ -109,7 +109,8 @@
     "folded": "{{count}} resources grouped",
     "overview": "Resource overview",
     "total": "resources",
-    "helm": "{{count}} Helm release revisions"
+    "helm": "{{count}} Helm release revisions",
+    "standalone": "{{count}} unconnected resources"
   },
   "card": {
     "restarts": "{{count}} restarts"

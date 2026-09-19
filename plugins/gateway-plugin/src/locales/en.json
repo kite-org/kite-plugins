@@ -3,7 +3,8 @@
     "gateways": "Gateways",
     "gateway": "Gateway",
     "httproutes": "HTTP Routes",
-    "httproute": "HTTPRoute"
+    "httproute": "HTTPRoute",
+    "pods": "Pods"
   },
   "fields": {
     "name": "Name",
@@ -29,7 +30,8 @@
     "weight": "Weight",
     "operation": "Operation",
     "operator": "Operator",
-    "actions": "Actions"
+    "actions": "Actions",
+    "age": "Age"
   },
   "sections": {
     "listeners": "Listeners",
@@ -65,7 +67,8 @@
   "common": {
     "none": "None",
     "noStatus": "No status reported yet.",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "noPods": "No pods found"
   },
   "apply": {
     "title": "Create {{resource}}",

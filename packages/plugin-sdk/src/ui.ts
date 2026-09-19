@@ -9,6 +9,7 @@ import type * as LabelPrimitive from '@radix-ui/react-label'
 import type * as SelectPrimitive from '@radix-ui/react-select'
 import type * as TabsPrimitive from '@radix-ui/react-tabs'
 import type { ColumnDef } from '@tanstack/react-table'
+import type { Pod } from 'kubernetes-types/core/v1.js'
 
 import type { ResourceMetadata, ResourceReference } from './resources.js'
 
@@ -102,6 +103,17 @@ export let TabsTrigger: ComponentType<
 export let TabsContent: ComponentType<
   ComponentProps<typeof TabsPrimitive.Content>
 >
+
+export interface WorkloadPodsCardProps {
+  title: ReactNode
+  pods: Pod[]
+  isLoading: boolean
+  loadingText: ReactNode
+  emptyText: ReactNode
+  ageLabel: ReactNode
+}
+
+export let WorkloadPodsCard: ComponentType<WorkloadPodsCardProps>
 
 export interface ResourceTableProps<T> {
   id: string

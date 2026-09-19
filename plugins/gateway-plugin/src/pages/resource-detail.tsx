@@ -14,6 +14,7 @@ import {
   Section,
   Status,
 } from '../components/common'
+import { GatewayPods } from '../components/gateway-pods'
 import { History } from '../components/history'
 import { Relations } from '../components/relations'
 import { useTranslation } from '../i18n'
@@ -67,6 +68,7 @@ function Overview({
       <div className={styles.stack}>
         {resource.kind === 'Gateway' ? (
           <>
+            <GatewayPods gateway={resource} />
             <Section title={t('sections.conditions')}>
               <Conditions
                 conditions={resource.status?.conditions}
@@ -264,8 +266,8 @@ export default function ResourceDetail({ type }: { type: ResourceType }) {
         {
           value: 'overview',
           label: t('sections.overview'),
-          content: ({ resource }) => (
-            <Overview type={type} resource={resource} />
+          content: ({ resource, refreshKey }) => (
+            <Overview key={refreshKey} type={type} resource={resource} />
           ),
         },
         {

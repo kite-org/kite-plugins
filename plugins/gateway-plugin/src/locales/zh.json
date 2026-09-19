@@ -3,7 +3,8 @@
     "gateways": "Gateways",
     "gateway": "Gateway",
     "httproutes": "HTTPRoutes",
-    "httproute": "HTTPRoute"
+    "httproute": "HTTPRoute",
+    "pods": "Pods"
   },
   "fields": {
     "name": "名称",
@@ -29,7 +30,8 @@
     "weight": "权重",
     "operation": "操作",
     "operator": "操作人",
-    "actions": "操作"
+    "actions": "操作",
+    "age": "运行时间"
   },
   "sections": {
     "listeners": "监听器",
@@ -65,7 +67,8 @@
   "common": {
     "none": "无",
     "noStatus": "尚未上报状态。",
-    "loading": "加载中…"
+    "loading": "加载中…",
+    "noPods": "暂无 Pod"
   },
   "apply": {
     "title": "创建 {{resource}}",
