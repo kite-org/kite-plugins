@@ -97,6 +97,7 @@ export interface PluginResourceView<
 export interface PluginManifest extends PluginMetadata {
   schemaVersion: 1
   version: string
+  sdkVersion: string
   requires: { kite: string }
   entry: string
   module: string

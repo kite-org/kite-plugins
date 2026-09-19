@@ -82,6 +82,17 @@ export function validateManifest(
       'Plugin version must be a semantic version of at most 128 characters'
     )
   }
+  if (
+    typeof input.sdkVersion !== 'string' ||
+    input.sdkVersion.length > 128 ||
+    input.sdkVersion.trim() !== input.sdkVersion ||
+    input.sdkVersion.startsWith('v') ||
+    !valid(input.sdkVersion)
+  ) {
+    throw new Error(
+      'sdkVersion must be a semantic version of at most 128 characters'
+    )
+  }
   for (const key of ['description', 'author', 'homepage', 'license'] as const) {
     if (input[key] !== undefined && typeof input[key] !== 'string')
       throw new Error(`Plugin ${key} must be a string`)

@@ -1,11 +1,11 @@
 {
-  "name": "cert-manager",
-  "displayName": "cert-manager",
-  "version": "0.3.0",
+  "name": "resource-map",
+  "displayName": "Resource Map",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "license": "Apache-2.0",
-  "description": "Manage certificates, issuers, and ACME issuance resources in Kite.",
+  "description": "Explore Kubernetes resource relationships and health by namespace or node.",
   "author": "Kite",
   "scripts": {
     "type-check": "tsc --noEmit",
@@ -14,7 +14,11 @@
     "pack": "kite-plugin pack"
   },
   "dependencies": {
+    "@dagrejs/dagre": "^1.1.8",
     "@kite-dev/plugin-sdk": "workspace:^",
+    "@tabler/icons-react": "^3.46.0",
+    "@xyflow/react": "^12.10.0",
+    "elkjs": "^0.12.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.0.0"

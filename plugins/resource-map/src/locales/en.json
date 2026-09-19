@@ -1,0 +1,117 @@
+{
+  "title": "Resource Map",
+  "description": "Explore resource relationships and pinpoint issues.",
+  "resources_one": "{{count}} resource",
+  "resources_other": "{{count}} resources",
+  "issues_one": "{{count}} issue",
+  "issues_other": "{{count}} issues",
+  "showing": "{{visible}} of {{total}} resources",
+  "loading": "Loading resources…",
+  "updating": "Updating…",
+  "refreshHint": "Refreshes every 15 seconds",
+  "partialData": "Some resource types could not be loaded. Check cluster access and permissions:",
+  "inspector": "Resource details",
+  "related": "Related resources",
+  "noRelations": "No related resources in the current scope.",
+  "minimap": "Resource map overview",
+  "filters": {
+    "types": "Resource types",
+    "groupBy": "Group by",
+    "search": "Search resources…",
+    "issues": "Issues only"
+  },
+  "categories": {
+    "all": "All resource types",
+    "workloads": "Workloads",
+    "network": "Network",
+    "storage": "Storage",
+    "config": "Configuration",
+    "nodes": "Nodes"
+  },
+  "groups": {
+    "cluster": "Cluster resources",
+    "shared": "Multiple nodes",
+    "unassigned": "Unscheduled / unassigned"
+  },
+  "fields": {
+    "namespace": "Namespace",
+    "node": "Node",
+    "containers": "Ready containers",
+    "replicas": "Ready replicas",
+    "restarts": "Restarts",
+    "created": "Created",
+    "image": "Image",
+    "ports": "Ports",
+    "address": "Address",
+    "hosts": "Hosts",
+    "schedule": "Schedule",
+    "capacity": "Capacity",
+    "storageClass": "Storage class",
+    "keys": "Keys",
+    "secretType": "Type",
+    "version": "Version"
+  },
+  "actions": {
+    "collapse": "Collapse",
+    "expand": "Expand",
+    "zoomOut": "Zoom out",
+    "zoomIn": "Zoom in",
+    "fit": "Fit to view",
+    "close": "Close details",
+    "details": "Open resource details",
+    "logs": "View logs",
+    "refresh": "Refresh resources",
+    "reset": "Reset filters"
+  },
+  "status": {
+    "ready": "Ready",
+    "notReady": "Not ready",
+    "running": "Running",
+    "pending": "Pending",
+    "completed": "Completed",
+    "failed": "Failed",
+    "unknown": "Unknown",
+    "terminating": "Terminating",
+    "available": "Available",
+    "bound": "Bound",
+    "released": "Released",
+    "suspended": "Suspended",
+    "unschedulable": "Cordoned"
+  },
+  "events": {
+    "title": "Recent events",
+    "failed": "Events could not be loaded.",
+    "empty": "No recent events."
+  },
+  "relations": {
+    "owner": "Owns",
+    "selector": "Selects",
+    "route": "Routes to",
+    "config": "Referenced by",
+    "storage": "Storage reference",
+    "node": "Hosts"
+  },
+  "legend": {
+    "owner": "Ownership",
+    "reference": "Reference",
+    "select": "Click a resource to open its details"
+  },
+  "empty": {
+    "title": "No resources found",
+    "description": "There are no visible resources in the current scope.",
+    "filtered": "No matching resources",
+    "hint": "Try a different name, resource type, or status.",
+    "cluster": "Select a cluster to explore its resources."
+  },
+  "summary": {
+    "history": "{{count}} scaled-down revisions",
+    "replicas": "{{count}} healthy replicas",
+    "folded": "{{count}} resources grouped",
+    "overview": "Resource overview",
+    "total": "resources",
+    "helm": "{{count}} Helm release revisions"
+  },
+  "card": {
+    "restarts": "{{count}} restarts"
+  }
+}
