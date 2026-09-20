@@ -25,6 +25,8 @@ export const defaultKiteRange = '>=0.16.0'
 
 const coreMenuGroups = new Set<string>(coreMenuGroupIds)
 const idPattern = /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/
+// Theme IDs also become Monaco theme names, which only accept letters, digits and hyphens.
+const themeIdPattern = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -204,10 +206,50 @@ function validateResources(input: Record<string, unknown>) {
   }
 }
 
+function validateThemes(input: Record<string, unknown>) {
+  const themes = input.themes
+  if (themes === undefined) return
+  if (!Array.isArray(themes)) throw new Error('Plugin themes must be an array')
+  const themeIds = new Set<string>()
+  for (const theme of themes) {
+    if (!isRecord(theme)) throw new Error('Plugin themes must be objects')
+    if (
+      typeof theme.id !== 'string' ||
+      !themeIdPattern.test(theme.id) ||
+      themeIds.has(theme.id)
+    ) {
+      throw new Error(`Invalid or duplicate theme ID: ${String(theme.id)}`)
+    }
+    themeIds.add(theme.id)
+    if (theme.label !== undefined && !isLocalizedLabel(theme.label))
+      throw new Error(`Invalid label for theme: ${theme.id}`)
+    if (
+      !Array.isArray(theme.styles) ||
+      !theme.styles.length ||
+      !theme.styles.every(isAssetPath)
+    ) {
+      throw new Error(
+        `Theme ${theme.id} must list at least one relative stylesheet path`
+      )
+    }
+  }
+}
+
+function validateSettings(input: Record<string, unknown>) {
+  const settings = input.settings
+  if (settings === undefined) return
+  if (!isRecord(settings)) throw new Error('Plugin settings must be an object')
+  if (settings.label !== undefined && !isLocalizedLabel(settings.label))
+    throw new Error('Invalid label for plugin settings')
+}
+
 export function validateNavigation(
   pluginId: string,
   input: unknown
-): asserts input is Pick<PluginManifest, 'routes' | 'menus' | 'resources'> {
+): asserts input is Pick<
+  PluginManifest,
+  'routes' | 'menus' | 'resources' | 'themes' | 'settings'
+> {
   if (
     !isRecord(input) ||
     !Array.isArray(input.routes) ||
@@ -216,6 +258,8 @@ export function validateNavigation(
     throw new Error('Plugin routes and menus must be arrays')
   }
   validateResources(input)
+  validateThemes(input)
+  validateSettings(input)
   const routeIds = new Set<string>()
   const paths = new Set<string>()
   for (const route of input.routes) {
@@ -335,6 +379,12 @@ export function validateDefinition(
       throw new Error(`Missing element for route: ${route.id}`)
   }
   const definition = input as PluginDefinition
+  if (
+    definition.settings !== undefined &&
+    !Object.hasOwn(definition.settings, 'element')
+  ) {
+    throw new Error('Missing element for plugin settings')
+  }
   for (const resource of definition.resources) {
     for (const tab of resource.tabs ?? []) {
       if (!Object.hasOwn(tab, 'element'))

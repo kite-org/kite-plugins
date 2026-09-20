@@ -15,7 +15,12 @@ if (command === 'dev') {
     await readFile(resolve(root, 'plugin.json'), 'utf8')
   )
   validateManifest(manifest)
-  for (const path of [manifest.entry, ...(manifest.styles ?? [])]) {
+  const themeStyles = (manifest.themes ?? []).flatMap((theme) => theme.styles)
+  for (const path of [
+    manifest.entry,
+    ...(manifest.styles ?? []),
+    ...themeStyles,
+  ]) {
     if (!(await lstat(resolve(root, path))).isFile()) {
       throw new Error(
         `Plugin asset must be a regular file inside dist: ${path}`

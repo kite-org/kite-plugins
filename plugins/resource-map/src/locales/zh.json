@@ -8,7 +8,7 @@
   "showing": "显示 {{visible}} / {{total}} 个资源",
   "loading": "正在加载资源…",
   "updating": "正在更新…",
-  "refreshHint": "每 15 秒刷新",
+  "refreshHint": "每 {{seconds}} 秒刷新",
   "partialData": "部分资源类型加载失败，请检查集群连接和访问权限：",
   "inspector": "资源详情",
   "related": "关联资源",
@@ -114,5 +114,19 @@
   },
   "card": {
     "restarts": "重启 {{count}} 次"
+  },
+  "settings": {
+    "title": "资源地图设置",
+    "description": "打开地图时使用的默认值，页面上的分组和筛选仍然可以随时修改。",
+    "grouping": "默认分组方式",
+    "groupingNamespace": "按命名空间",
+    "groupingNode": "按节点",
+    "filter": "默认筛选",
+    "filterAll": "全部资源",
+    "filterIssues": "仅看异常",
+    "refreshSeconds": "刷新间隔（秒）",
+    "refreshHint": "取值 5 - 600 秒。",
+    "save": "保存",
+    "saving": "保存中…"
   }
 }

@@ -8,7 +8,7 @@
   "showing": "{{visible}} of {{total}} resources",
   "loading": "Loading resources…",
   "updating": "Updating…",
-  "refreshHint": "Refreshes every 15 seconds",
+  "refreshHint": "Refreshes every {{seconds}} seconds",
   "partialData": "Some resource types could not be loaded. Check cluster access and permissions:",
   "inspector": "Resource details",
   "related": "Related resources",
@@ -114,5 +114,19 @@
   },
   "card": {
     "restarts": "{{count}} restarts"
+  },
+  "settings": {
+    "title": "Resource Map settings",
+    "description": "Defaults applied when the map opens. Grouping and filters can still be changed on the page.",
+    "grouping": "Default grouping",
+    "groupingNamespace": "By namespace",
+    "groupingNode": "By node",
+    "filter": "Default filter",
+    "filterAll": "All resources",
+    "filterIssues": "Issues only",
+    "refreshSeconds": "Refresh interval (seconds)",
+    "refreshHint": "Between 5 and 600 seconds.",
+    "save": "Save",
+    "saving": "Saving…"
   }
 }

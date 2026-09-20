@@ -50,7 +50,10 @@ export function kitePlugin({
         this.error('Restart the plugin build after changing its id or version')
       // A fresh worker also resets native ESM caches for imported config constants during watch builds.
       const navigation = await new Promise<
-        Pick<PluginManifest, 'routes' | 'menus' | 'resources'>
+        Pick<
+          PluginManifest,
+          'routes' | 'menus' | 'resources' | 'themes' | 'settings'
+        >
       >((resolve, reject) => {
         const worker = new Worker(
           new URL('./build-navigation.js', import.meta.url),

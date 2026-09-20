@@ -3,6 +3,7 @@ import {
   useCluster,
   useNamespace,
   usePageTitle,
+  usePluginSettings,
   useTheme,
 } from '@kite-dev/plugin-sdk/hooks'
 import {
@@ -31,11 +32,14 @@ import { Inspector } from './inspector'
 import { layoutMap, type Grouping } from './layout'
 import styles from './map.module.css'
 import { definitions, isIssue, type Category, type MapResource } from './model'
+import type { ResourceMapSettings } from './settings'
 
 function MapContent({ namespace }: { namespace: string }) {
   const { t } = useTranslation()
   const { setNamespace } = useNamespace()
-  const data = useMapData(namespace)
+  const { settings } = usePluginSettings<ResourceMapSettings>()
+  const refreshSeconds = settings?.refreshSeconds ?? 15
+  const data = useMapData(namespace, refreshSeconds * 1000)
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState<Category | 'all'>('all')
   const [grouping, setGrouping] = useState<Grouping>('namespace')
@@ -43,6 +47,13 @@ function MapContent({ namespace }: { namespace: string }) {
   const [selection, setSelection] = useState<string | null>(null)
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
   const [canvasWidth, setCanvasWidth] = useState(1000)
+  const [appliedSettings, setAppliedSettings] = useState(false)
+  useEffect(() => {
+    if (appliedSettings || !settings) return
+    setAppliedSettings(true)
+    if (settings.grouping) setGrouping(settings.grouping)
+    if (settings.issuesOnly !== undefined) setIssuesOnly(settings.issuesOnly)
+  }, [appliedSettings, settings])
   const workspaceRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const observer = new ResizeObserver(([entry]) =>
@@ -327,7 +338,9 @@ function MapContent({ namespace }: { namespace: string }) {
           <i
             className={data.errors.length ? styles.warningDot : styles.liveDot}
           />
-          {t(data.isFetching ? 'updating' : 'refreshHint')}
+          {data.isFetching
+            ? t('updating')
+            : t('refreshHint', { seconds: refreshSeconds })}
         </span>
       </footer>
     </>

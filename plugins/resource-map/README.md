@@ -14,6 +14,7 @@ Explore Kubernetes resource relationships in Kite. The plugin adds **Resource Ma
 - Open Kite's native resource details and Pod logs.
 - Refresh automatically every 15 seconds or manually. Failed resource queries are reported without hiding resources that loaded successfully.
 - English and Chinese translations, light and dark themes, and a stacked layout on narrow screens.
+- Configure the default grouping, issue filter, and refresh interval from the plugin management page; settings are stored by Kite and apply to every user.
 
 The map supports Pods, Deployments, ReplicaSets, StatefulSets, DaemonSets, Jobs, CronJobs, Services, Ingresses, ConfigMaps, Secrets, PVCs, PVs, and Nodes. Relationships come from owner references, Service selectors, Ingress backends and TLS references, Pod configuration and volume references, PVC bindings, and Pod scheduling. Edges represent declared relationships, not observed network traffic.
 
@@ -38,7 +39,7 @@ pnpm --filter 'resource-map...' run build
 pnpm --filter resource-map run pack
 ```
 
-Install `plugins/resource-map/resource-map-0.1.7.tar.gz` from **Plugin management → Install from file**.
+Install `plugins/resource-map/resource-map-0.4.0.tar.gz` from **Plugin management → Install from file**.
 
 ## Development
 

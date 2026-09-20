@@ -3,8 +3,8 @@ import { useResources } from '@kite-dev/plugin-sdk/resources'
 
 import { buildMap, type ResourceObjects } from './model'
 
-export function useMapData(namespace: string) {
-  const options = { namespace, refreshInterval: 15000 }
+export function useMapData(namespace: string, refreshInterval: number) {
+  const options = { namespace, refreshInterval }
   const pods = useResources<ResourceObjects['pods']>(
     { group: '', resource: 'pods' },
     options

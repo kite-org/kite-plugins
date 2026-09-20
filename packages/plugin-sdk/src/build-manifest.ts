@@ -28,6 +28,7 @@ export function readPluginManifest(packagePath: string): PluginManifest {
     routes: [],
     menus: [],
     resources: [],
+    themes: [],
   }
   validateManifest(manifest)
   return manifest

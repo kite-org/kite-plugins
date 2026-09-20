@@ -87,3 +87,13 @@ export let useClusters: (options?: {
   enabled?: boolean
 }) => UseQueryResult<ClusterInfo[], Error>
 export let useNamespace: () => NamespaceContext
+
+export let usePluginSettings: <
+  T extends object = Record<string, unknown>,
+>() => {
+  settings: T | undefined
+  isLoading: boolean
+  isSaving: boolean
+  error: Error | null
+  save: (settings: T) => Promise<T>
+}
