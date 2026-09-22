@@ -1,6 +1,6 @@
 # Kite Plugins
 
-Plugins extend [Kite](https://kite.zzde.me) with custom Kubernetes interfaces. They run inside Kite and use its existing APIs, authentication, and cluster context.
+Plugins extend [Kite](https://kitehq.dev) with custom Kubernetes interfaces. They run inside Kite and use its existing APIs, authentication, and cluster context.
 
 This repository contains the official plugins, the [plugin SDK](packages/plugin-sdk/README.md), and the [project creator](packages/create-plugin-sdk/README.md).
 
@@ -59,9 +59,9 @@ PLUGIN_DEV_URL=http://localhost:5174/plugin.json ./kite
 
 ## Documentation
 
-- [Plugin overview](https://kite.zzde.me/plugins/)
-- [Quick start](https://kite.zzde.me/plugins/quick-start)
-- [API reference](https://kite.zzde.me/plugins/api)
-- [Localization](https://kite.zzde.me/plugins/i18n)
-- [Debugging](https://kite.zzde.me/plugins/debugging)
-- [Publishing](https://kite.zzde.me/plugins/publishing)
+- [Plugin overview](https://kitehq.dev/plugins/)
+- [Quick start](https://kitehq.dev/plugins/quick-start)
+- [API reference](https://kitehq.dev/plugins/api)
+- [Localization](https://kitehq.dev/plugins/i18n)
+- [Debugging](https://kitehq.dev/plugins/debugging)
+- [Publishing](https://kitehq.dev/plugins/publishing)

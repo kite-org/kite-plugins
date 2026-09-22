@@ -84,7 +84,7 @@ jobs:
 
       - name: Prepare EdgeOne deployment
         if: ${{ steps.versions.outputs.publish == 'true' || github.event_name == 'workflow_dispatch' }}
-        run: node script/mirror-catalog.mjs dist/pages/catalog.json https://kite-plugins.zzde.me/
+        run: node script/mirror-catalog.mjs dist/pages/catalog.json https://kite-plugins.kitehq.dev/
 
       - name: Deploy to EdgeOne Makers
         if: ${{ steps.versions.outputs.publish == 'true' || github.event_name == 'workflow_dispatch' }}

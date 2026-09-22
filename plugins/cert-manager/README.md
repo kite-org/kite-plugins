@@ -83,7 +83,7 @@ To develop inside Kite:
 pnpm --filter cert-manager dev
 ```
 
-The command prints a development manifest URL. Start Kite with `PLUGIN_DEV_URL` set to that URL, then wait for each rebuild and refresh Kite to see changes. No packaging, installation, or version bump is needed while developing. See the [development guide](../../packages/plugin-sdk/README.md#developing-a-plugin) for address configuration. For distributing packages through a catalog, see the [publishing guide](https://kite.zzde.me/zh/plugins/publishing).
+The command prints a development manifest URL. Start Kite with `PLUGIN_DEV_URL` set to that URL, then wait for each rebuild and refresh Kite to see changes. No packaging, installation, or version bump is needed while developing. See the [development guide](../../packages/plugin-sdk/README.md#developing-a-plugin) for address configuration. For distributing packages through a catalog, see the [publishing guide](https://kitehq.dev/zh/plugins/publishing).
 
 The main source files are:
 
