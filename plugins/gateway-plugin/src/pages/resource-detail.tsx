@@ -3,6 +3,7 @@ import { updateResource, useResource } from '@kite-dev/plugin-sdk/resources'
 import {
   ResourceDetailShell,
   ResourceEvents,
+  ResourceHistoryTable,
   ResourceOverview,
   ResourceYaml,
 } from '@kite-dev/plugin-sdk/ui'
@@ -15,7 +16,6 @@ import {
   Status,
 } from '../components/common'
 import { GatewayPods } from '../components/gateway-pods'
-import { History } from '../components/history'
 import { Relations } from '../components/relations'
 import { useTranslation } from '../i18n'
 import {
@@ -309,12 +309,13 @@ export default function ResourceDetail({ type }: { type: ResourceType }) {
         {
           value: 'history',
           label: t('sections.history'),
-          content: ({ refreshKey }) => (
-            <History
+          content: ({ resource, refreshKey }) => (
+            <ResourceHistoryTable
               key={refreshKey}
-              type={type}
+              resource={definition.reference}
               name={name}
               namespace={namespace}
+              currentResource={resource}
             />
           ),
         },

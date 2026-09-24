@@ -28,9 +28,6 @@
     "headers": "请求头",
     "queryParams": "查询参数",
     "weight": "权重",
-    "operation": "操作",
-    "operator": "操作人",
-    "actions": "操作",
     "age": "运行时间"
   },
   "sections": {
@@ -56,10 +53,7 @@
     "create": "创建",
     "apply": "应用",
     "applying": "正在应用…",
-    "cancel": "取消",
-    "previous": "上一页",
-    "next": "下一页",
-    "viewYaml": "查看 YAML"
+    "cancel": "取消"
   },
   "list": {
     "empty": "所选命名空间中没有资源。"
@@ -74,12 +68,5 @@
     "title": "创建 {{resource}}",
     "description": "应用前请修改 YAML 中的命名空间和资源引用。",
     "failed": "应用资源失败。"
-  },
-  "history": {
-    "empty": "暂无历史记录。",
-    "success": "成功",
-    "failed": "失败",
-    "previous": "变更前",
-    "current": "变更后"
   }
 }

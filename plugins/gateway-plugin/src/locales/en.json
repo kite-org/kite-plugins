@@ -28,9 +28,6 @@
     "headers": "Headers",
     "queryParams": "Query parameters",
     "weight": "Weight",
-    "operation": "Operation",
-    "operator": "Operator",
-    "actions": "Actions",
     "age": "Age"
   },
   "sections": {
@@ -56,10 +53,7 @@
     "create": "Create",
     "apply": "Apply",
     "applying": "Applying…",
-    "cancel": "Cancel",
-    "previous": "Previous",
-    "next": "Next",
-    "viewYaml": "View YAML"
+    "cancel": "Cancel"
   },
   "list": {
     "empty": "No resources found in the selected namespace."
@@ -74,12 +68,5 @@
     "title": "Create {{resource}}",
     "description": "Edit the namespace and references in this manifest before applying it.",
     "failed": "Failed to apply resource."
-  },
-  "history": {
-    "empty": "No history recorded.",
-    "success": "Succeeded",
-    "failed": "Failed",
-    "previous": "Before change",
-    "current": "After change"
   }
 }

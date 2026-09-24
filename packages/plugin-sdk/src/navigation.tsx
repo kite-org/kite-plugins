@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext } from 'react'
+import { createContext, useCallback, useContext, useMemo } from 'react'
 import type { PropsWithChildren } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { LinkProps, NavigateOptions } from 'react-router-dom'
@@ -17,10 +17,9 @@ export function PluginProvider({
   routes,
   children,
 }: PropsWithChildren<PluginContextValue>) {
+  const value = useMemo(() => ({ pluginId, routes }), [pluginId, routes])
   return (
-    <PluginContext.Provider value={{ pluginId, routes }}>
-      {children}
-    </PluginContext.Provider>
+    <PluginContext.Provider value={value}>{children}</PluginContext.Provider>
   )
 }
 
