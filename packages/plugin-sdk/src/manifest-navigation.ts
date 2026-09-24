@@ -1,10 +1,19 @@
-import { isValidElement } from 'react'
+import type { ReactElement } from 'react'
 
 import type {
   LocalizedLabel,
   PluginDefinition,
   PluginManifest,
 } from './index.js'
+
+export function isReactElement(value: unknown): value is ReactElement {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    '$$typeof' in value &&
+    value.$$typeof === Symbol.for('react.transitional.element')
+  )
+}
 
 function labelMetadata(label: LocalizedLabel) {
   return typeof label === 'object' ? { en: label.en, zh: label.zh } : label
@@ -33,7 +42,7 @@ export function getPluginNavigation(definition: NavigationInput) {
           resource: resource.resource,
         },
         order,
-        icon: isValidElement(icon) ? (true as const) : icon,
+        icon: isReactElement(icon) ? (true as const) : icon,
       })
     ),
     resources: definition.resources.map(

@@ -1,4 +1,3 @@
-import { isValidElement } from 'react'
 import valid from 'semver/functions/valid.js'
 import validRange from 'semver/ranges/valid.js'
 
@@ -8,7 +7,7 @@ import type {
   PluginMenuMetadata,
   PluginRouteMetadata,
 } from './index.js'
-import { getPluginNavigation } from './manifest-navigation.js'
+import { getPluginNavigation, isReactElement } from './manifest-navigation.js'
 import { resolvePluginRoute } from './route-path.js'
 
 export const coreMenuGroupIds = [
@@ -127,7 +126,7 @@ export function validateManifest(
   }
   validateNavigation(id, input)
   for (const menu of input.menus) {
-    if (isValidElement(menu.icon))
+    if (isReactElement(menu.icon))
       throw new Error(`Invalid icon metadata for menu: ${menu.id}`)
   }
 }
@@ -306,7 +305,7 @@ export function validateNavigation(
     if (
       menu.icon !== undefined &&
       menu.icon !== true &&
-      !isValidElement(menu.icon) &&
+      !isReactElement(menu.icon) &&
       (typeof menu.icon !== 'string' || !/^Icon[A-Za-z0-9]+$/.test(menu.icon))
     ) {
       throw new Error(`Invalid icon for menu: ${menu.id}`)
