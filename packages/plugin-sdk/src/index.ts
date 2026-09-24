@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 import type { AccessorFn, ColumnDef } from '@tanstack/react-table'
 
 import type { KubernetesResource } from './resources.js'
@@ -119,7 +119,7 @@ export interface PluginManifest extends PluginMetadata {
   module: string
   styles?: string[]
   routes: readonly PluginRouteMetadata[]
-  menus: readonly PluginMenu[]
+  menus: readonly PluginMenuMetadata[]
   resources: readonly PluginResourceMetadata[]
   themes?: readonly PluginTheme[]
   settings?: PluginSettingsMetadata
@@ -132,7 +132,11 @@ export interface PluginMenu<RouteId extends string = string> {
   route?: RouteId
   resource?: PluginResourceTarget
   order?: number
-  icon?: string
+  icon?: string | ReactElement<{ className?: string }>
+}
+
+export interface PluginMenuMetadata extends Omit<PluginMenu, 'icon'> {
+  icon?: string | true
 }
 
 export interface PluginDefinition {

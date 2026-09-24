@@ -1,3 +1,5 @@
+import { isValidElement } from 'react'
+
 import type {
   LocalizedLabel,
   PluginDefinition,
@@ -31,7 +33,7 @@ export function getPluginNavigation(definition: NavigationInput) {
           resource: resource.resource,
         },
         order,
-        icon,
+        icon: isValidElement(icon) ? (true as const) : icon,
       })
     ),
     resources: definition.resources.map(

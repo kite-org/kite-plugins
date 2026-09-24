@@ -1,10 +1,11 @@
+import { isValidElement } from 'react'
 import valid from 'semver/functions/valid.js'
 import validRange from 'semver/ranges/valid.js'
 
 import type {
   PluginDefinition,
   PluginManifest,
-  PluginMenu,
+  PluginMenuMetadata,
   PluginRouteMetadata,
 } from './index.js'
 import { getPluginNavigation } from './manifest-navigation.js'
@@ -125,6 +126,10 @@ export function validateManifest(
     throw new Error('Invalid requires.kite range')
   }
   validateNavigation(id, input)
+  for (const menu of input.menus) {
+    if (isValidElement(menu.icon))
+      throw new Error(`Invalid icon metadata for menu: ${menu.id}`)
+  }
 }
 
 function validateResourceTarget(input: unknown) {
@@ -247,7 +252,7 @@ export function validateNavigation(
   pluginId: string,
   input: unknown
 ): asserts input is Pick<
-  PluginManifest,
+  PluginManifest | PluginDefinition,
   'routes' | 'menus' | 'resources' | 'themes' | 'settings'
 > {
   if (
@@ -300,6 +305,8 @@ export function validateNavigation(
       throw new Error(`Invalid label for menu: ${menu.id}`)
     if (
       menu.icon !== undefined &&
+      menu.icon !== true &&
+      !isValidElement(menu.icon) &&
       (typeof menu.icon !== 'string' || !/^Icon[A-Za-z0-9]+$/.test(menu.icon))
     ) {
       throw new Error(`Invalid icon for menu: ${menu.id}`)
@@ -326,7 +333,7 @@ export function validateNavigation(
     }
   }
   const menus = new Map(
-    (input.menus as PluginMenu[]).map((menu) => [
+    (input.menus as PluginMenuMetadata[]).map((menu) => [
       `${pluginId}:${menu.id}`,
       menu,
     ])
@@ -363,6 +370,12 @@ export function validateDefinition(
   input: unknown
 ): asserts input is PluginDefinition {
   validateNavigation(pluginId, input)
+  for (const menu of input.menus) {
+    if (menu.icon === true)
+      throw new Error(
+        `Menu icon must be a built-in name or a React element: ${menu.id}`
+      )
+  }
   if ('i18n' in input && input.i18n !== undefined) {
     if (
       !isRecord(input.i18n) ||

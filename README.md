@@ -61,7 +61,7 @@ PLUGIN_DEV_URL=http://localhost:5174/plugin.json ./kite
 
 - [Plugin overview](https://kitehq.dev/plugins/)
 - [Quick start](https://kitehq.dev/plugins/quick-start)
-- [API reference](https://kitehq.dev/plugins/api)
+- [API reference](https://kitehq.dev/plugins/api/plugin-config)
 - [Localization](https://kitehq.dev/plugins/i18n)
 - [Debugging](https://kitehq.dev/plugins/debugging)
 - [Publishing](https://kitehq.dev/plugins/publishing)
