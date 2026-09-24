@@ -97,3 +97,10 @@ export let usePluginSettings: <
   error: Error | null
   save: (settings: T) => Promise<T>
 }
+
+export interface HostInfo {
+  kiteVersion: string
+  sdkVersion: string
+}
+
+export let useHostInfo: () => HostInfo

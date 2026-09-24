@@ -24,6 +24,8 @@ import {
   IconSearch,
   IconTopologyStar,
 } from '@tabler/icons-react'
+import Elk, { type ELK } from 'elkjs/lib/elk-api.js'
+import ElkWorker from 'elkjs/lib/elk-worker.min.js?worker&inline'
 
 import { useMapData } from './data'
 import { ResourceGraph } from './graph'
@@ -82,10 +84,20 @@ function MapContent({ namespace }: { namespace: string }) {
       setExpanded((value) => ({ ...value, [id]: !current })),
     []
   )
+  const elk = useRef<ELK | null>(null)
+  useEffect(() => {
+    const instance = new Elk({ workerFactory: () => new ElkWorker() })
+    elk.current = instance
+    return () => {
+      instance.terminateWorker()
+      elk.current = null
+    }
+  }, [])
   const [graph, setGraph] = useState<Awaited<ReturnType<typeof layoutMap>>>()
   useEffect(() => {
     let active = true
     void layoutMap(
+      elk.current!,
       filtered,
       data.resources,
       data.relations,

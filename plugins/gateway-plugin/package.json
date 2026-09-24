@@ -6,7 +6,7 @@
   "type": "module",
   "license": "Apache-2.0",
   "description": "Manage Kubernetes Gateways and HTTPRoutes in Kite.",
-  "author": "Kite",
+  "author": "zxh326",
   "scripts": {
     "type-check": "tsc --noEmit",
     "build": "tsc --noEmit && vite build",

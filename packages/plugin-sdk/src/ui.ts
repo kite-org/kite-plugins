@@ -9,9 +9,17 @@ import type * as LabelPrimitive from '@radix-ui/react-label'
 import type * as SelectPrimitive from '@radix-ui/react-select'
 import type * as TabsPrimitive from '@radix-ui/react-tabs'
 import type { ColumnDef } from '@tanstack/react-table'
-import type { Pod } from 'kubernetes-types/core/v1.js'
+import type {
+  Container,
+  EphemeralContainer,
+  Pod,
+} from 'kubernetes-types/core/v1.js'
 
-import type { ResourceMetadata, ResourceReference } from './resources.js'
+import type {
+  KubernetesResource,
+  ResourceMetadata,
+  ResourceReference,
+} from './resources.js'
 
 export interface ButtonProps extends ComponentProps<'button'> {
   variant?:
@@ -230,3 +238,70 @@ export interface YamlEditorProps {
 export let YamlEditor: ComponentType<YamlEditorProps>
 
 export type { ColumnDef } from '@tanstack/react-table'
+
+export interface ToastOptions {
+  id?: string | number
+  description?: ReactNode
+  duration?: number
+  dismissible?: boolean
+  closeButton?: boolean
+  action?: { label: ReactNode; onClick: () => void }
+}
+
+export type ToastMessage = (
+  message: ReactNode,
+  options?: ToastOptions
+) => string | number
+
+export interface Toast {
+  (message: ReactNode, options?: ToastOptions): string | number
+  success: ToastMessage
+  error: ToastMessage
+  info: ToastMessage
+  warning: ToastMessage
+  loading: ToastMessage
+  dismiss: (id?: string | number) => void
+}
+
+export let toast: Toast
+
+export interface ResourceHistoryTableProps<
+  T = KubernetesResource,
+> extends ResourceEventsProps {
+  currentResource?: T
+}
+
+export let ResourceHistoryTable: <T = KubernetesResource>(
+  props: ResourceHistoryTableProps<T>
+) => ReactElement
+export let RelatedResourcesTable: ComponentType<ResourceEventsProps>
+
+export interface LogViewerProps {
+  namespace: string
+  podName?: string
+  pods?: Pod[]
+  labelSelector?: string
+  containers?: Container[]
+  initContainers?: Container[]
+  ephemeralContainers?: EphemeralContainer[]
+  selectedContainerName?: string
+  onClose?: () => void
+}
+
+export let LogViewer: ComponentType<LogViewerProps>
+
+export interface TerminalProps {
+  type?: 'node' | 'pod' | 'kubectl'
+  namespace?: string
+  podName?: string
+  nodeName?: string
+  pods?: Pod[]
+  containers?: Container[]
+  initContainers?: Container[]
+  ephemeralContainers?: EphemeralContainer[]
+  attachContainerName?: string
+  selectedContainerName?: string
+  embedded?: boolean
+}
+
+export let Terminal: ComponentType<TerminalProps>

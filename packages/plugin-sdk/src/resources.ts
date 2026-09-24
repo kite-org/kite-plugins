@@ -227,13 +227,17 @@ export let applyResource: (
   yaml: string,
   namespace?: string
 ) => Promise<ApplyResourceResponse>
+export let createResource: <T>(
+  resource: ResourceReference,
+  body: T,
+  options?: ResourceScopeOptions
+) => Promise<T>
 export let updateResource: <T>(
   resource: ResourceReference,
   name: string,
   body: T,
   options?: ResourceScopeOptions
 ) => Promise<void>
-/** Built-in resources only; use applyResource for custom resources. */
 export let patchResource: <T>(
   resource: ResourceReference,
   name: string,

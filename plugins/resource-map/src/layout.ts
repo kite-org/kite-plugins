@@ -1,5 +1,5 @@
 import { MarkerType, type Edge, type Node } from '@xyflow/react'
-import ELK, { type ElkNode, type ElkPoint } from 'elkjs/lib/elk.bundled.js'
+import type { ELK, ElkNode, ElkPoint } from 'elkjs/lib/elk-api.js'
 
 import { isIssue, type MapResource, type Relation } from './model'
 import { routeEdges } from './routing'
@@ -36,9 +36,9 @@ export type RoutedEdge = Edge<{ points: { x: number; y: number }[] }, 'routed'>
 const cardWidth = 224
 const cardHeight = 96
 const gap = 24
-const elk = new ELK()
 
 export async function layoutMap(
+  elk: ELK,
   resources: MapResource[],
   allResources: MapResource[],
   allRelations: Relation[],
