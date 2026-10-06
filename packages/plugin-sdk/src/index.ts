@@ -3,7 +3,8 @@ import type { AccessorFn, ColumnDef } from '@tanstack/react-table'
 
 import type { KubernetesResource } from './resources.js'
 
-export type LocalizedLabel = string | { en: string; zh: string }
+export type LocalizedLabel =
+  string | { en: string; [language: string]: string | undefined }
 
 export interface PluginTranslationDictionary {
   [key: string]: string | PluginTranslationDictionary
@@ -11,7 +12,7 @@ export interface PluginTranslationDictionary {
 
 export interface PluginTranslations {
   en: PluginTranslationDictionary
-  zh: PluginTranslationDictionary
+  [language: string]: PluginTranslationDictionary | undefined
 }
 
 export interface PluginMetadata {

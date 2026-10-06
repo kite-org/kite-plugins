@@ -20,7 +20,7 @@ pnpm run pack
 
 With npm, use `npm create @kite-dev/plugin-sdk my-plugin`, then `npm install`, `npm run build`, and `npm run pack`.
 
-The creator prompts for a directory and display name. It generates a TypeScript project with `plugin.config.tsx`, Vite configuration, a lazy-loaded page, English and Chinese locale files, CSS Modules, and package scripts. To skip prompts:
+The creator prompts for a directory and display name. It generates a TypeScript project with `plugin.config.tsx`, Vite configuration, a lazy-loaded page, English and Chinese locale files, CSS Modules, and package scripts. English is required; other languages can be incomplete or omitted, with missing text falling back to English. To skip prompts:
 
 ```sh
 pnpm create @kite-dev/plugin-sdk my-plugin --yes --display-name "My Plugin"

@@ -16,7 +16,16 @@ export function isReactElement(value: unknown): value is ReactElement {
 }
 
 function labelMetadata(label: LocalizedLabel) {
-  return typeof label === 'object' ? { en: label.en, zh: label.zh } : label
+  return typeof label === 'object'
+    ? {
+        en: label.en,
+        ...Object.fromEntries(
+          Object.keys(label)
+            .sort()
+            .map((language) => [language, label[language]])
+        ),
+      }
+    : label
 }
 
 type NavigationInput = Pick<

@@ -1,14 +1,12 @@
 import type { TFunctionDetailedResult, TOptions } from 'i18next'
 import { useTranslation as useReactTranslation } from 'react-i18next'
 
-import type { PluginTranslationDictionary } from './index.js'
+import type {
+  LocalizedLabel,
+  PluginTranslationDictionary,
+  PluginTranslations,
+} from './index.js'
 import { usePlugin } from './navigation.js'
-
-type TranslationShape<Dictionary> = {
-  [Key in keyof Dictionary]: Dictionary[Key] extends string
-    ? string
-    : TranslationShape<Dictionary[Key]>
-}
 
 export type PluginTranslationKey<Dictionary> = string extends keyof Dictionary
   ? string
@@ -46,26 +44,29 @@ type PluginTFunction<Key extends string> = {
 function readLabel(
   dictionary: PluginTranslationDictionary,
   key: string
-): string {
+): string | undefined {
   const value = dictionary[key]
   if (typeof value === 'string') return value
   const [segment, ...rest] = key.split('.')
-  return readLabel(
-    dictionary[segment] as PluginTranslationDictionary,
-    rest.join('.')
-  )
+  const nested = dictionary[segment]
+  return rest.length > 0 && typeof nested === 'object'
+    ? readLabel(nested, rest.join('.'))
+    : undefined
 }
 
 export function createPluginI18n<
   const Dictionary extends PluginTranslationDictionary,
->(resources: { en: Dictionary; zh: TranslationShape<NoInfer<Dictionary>> }) {
+>(resources: PluginTranslations & { en: Dictionary }) {
   return {
     resources,
     label(key: PluginTranslationKey<Dictionary>) {
-      return {
-        en: readLabel(resources.en, key),
-        zh: readLabel(resources.zh, key),
+      const labels: LocalizedLabel = { en: readLabel(resources.en, key)! }
+      for (const [language, messages] of Object.entries(resources)) {
+        if (language !== 'en' && messages) {
+          labels[language] = readLabel(messages, key)
+        }
       }
+      return labels
     },
     useTranslation() {
       const { pluginId } = usePlugin()

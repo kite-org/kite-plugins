@@ -37,7 +37,9 @@ function isLocalizedLabel(value: unknown) {
     typeof value === 'string' ||
     (isRecord(value) &&
       typeof value.en === 'string' &&
-      typeof value.zh === 'string')
+      Object.values(value).every(
+        (text) => text === undefined || typeof text === 'string'
+      ))
   )
 }
 
@@ -351,15 +353,11 @@ export function validateNavigation(
   }
 }
 
-function matchingTranslations(en: unknown, zh: unknown): boolean {
-  if (typeof en === 'string') return typeof zh === 'string'
+function isTranslationDictionary(input: unknown): boolean {
   return (
-    isRecord(en) &&
-    isRecord(zh) &&
-    Object.keys(en).length === Object.keys(zh).length &&
-    Object.entries(en).every(
-      ([key, value]) =>
-        Object.hasOwn(zh, key) && matchingTranslations(value, zh[key])
+    isRecord(input) &&
+    Object.values(input).every(
+      (value) => typeof value === 'string' || isTranslationDictionary(value)
     )
   )
 }
@@ -378,11 +376,14 @@ export function validateDefinition(
   if ('i18n' in input && input.i18n !== undefined) {
     if (
       !isRecord(input.i18n) ||
-      !isRecord(input.i18n.en) ||
-      !matchingTranslations(input.i18n.en, input.i18n.zh)
+      !isTranslationDictionary(input.i18n.en) ||
+      !Object.values(input.i18n).every(
+        (messages) =>
+          messages === undefined || isTranslationDictionary(messages)
+      )
     ) {
       throw new Error(
-        'Plugin i18n must provide en and zh dictionaries with matching string keys'
+        'Plugin i18n must provide an en dictionary; all translation dictionaries must contain only strings'
       )
     }
   }
