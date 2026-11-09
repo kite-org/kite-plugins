@@ -1,0 +1,10 @@
+{
+  "title": "准入策略",
+  "fields": {
+    "name": "名称",
+    "kind": "类型",
+    "created": "创建时间"
+  },
+  "empty": "未找到准入 Webhook 或准入策略。",
+  "partialError": "部分策略类型加载失败，列表可能不完整："
+}

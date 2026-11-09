@@ -13,11 +13,12 @@ This repository contains the official plugins, the [plugin SDK](packages/plugin-
 
 ## Available plugins
 
-| Plugin                                          | Description                                                                                |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| [cert-manager](plugins/cert-manager/README.md)  | Manage certificates, issuers, certificate requests, and ACME resources.                    |
-| [Gateway API](plugins/gateway-plugin/README.md) | Manage Gateways and HTTPRoutes, including listeners, routing rules, and related resources. |
-| [Resource Map](plugins/resource-map/README.md)  | Visualize Kubernetes resource relationships and health, grouped by namespace or node.      |
+| Plugin                                                     | Description                                                                                |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| [Admission Policies](plugins/admission-policies/README.md) | List admission webhooks and admission policies in one table.                               |
+| [cert-manager](plugins/cert-manager/README.md)             | Manage certificates, issuers, certificate requests, and ACME resources.                    |
+| [Gateway API](plugins/gateway-plugin/README.md)            | Manage Gateways and HTTPRoutes, including listeners, routing rules, and related resources. |
+| [Resource Map](plugins/resource-map/README.md)             | Visualize Kubernetes resource relationships and health, grouped by namespace or node.      |
 
 ## Create a plugin
 

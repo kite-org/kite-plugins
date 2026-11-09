@@ -1,0 +1,10 @@
+{
+  "title": "Admission Policies",
+  "fields": {
+    "name": "Name",
+    "kind": "Kind",
+    "created": "Created"
+  },
+  "empty": "No admission webhooks or policies found.",
+  "partialError": "Some policy types could not be loaded, so the list may be incomplete:"
+}

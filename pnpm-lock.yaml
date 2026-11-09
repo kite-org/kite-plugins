@@ -133,6 +133,37 @@ importers:
         specifier: ^8.68.0
         version: 8.70.0(eslint@10.10.0(jiti@2.7.0))(typescript@6.0.3)
 
+  plugins/admission-policies:
+    dependencies:
+      '@kite-dev/plugin-sdk':
+        specifier: workspace:^
+        version: link:../../packages/plugin-sdk
+      react:
+        specifier: ^19.2.0
+        version: 19.2.8
+      react-dom:
+        specifier: ^19.2.0
+        version: 19.2.8(react@19.2.8)
+      react-router-dom:
+        specifier: ^7.0.0
+        version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+    devDependencies:
+      '@types/node':
+        specifier: ^24.0.0
+        version: 24.13.3
+      '@types/react':
+        specifier: ^19.2.0
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19.2.0
+        version: 19.2.7(@types/react@19.2.18)
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.0.0
+        version: 8.2.2(@types/node@24.13.3)(jiti@2.7.0)
+
   plugins/cert-manager:
     dependencies:
       '@kite-dev/plugin-sdk':
