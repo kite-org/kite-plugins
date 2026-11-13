@@ -6,6 +6,7 @@ import type {
 } from 'react'
 import type * as DialogPrimitive from '@radix-ui/react-dialog'
 import type * as LabelPrimitive from '@radix-ui/react-label'
+import type * as PopoverPrimitive from '@radix-ui/react-popover'
 import type * as SelectPrimitive from '@radix-ui/react-select'
 import type * as TabsPrimitive from '@radix-ui/react-tabs'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -103,6 +104,14 @@ export let SelectScrollUpButton: ComponentType<
 export let SelectScrollDownButton: ComponentType<
   ComponentProps<typeof SelectPrimitive.ScrollDownButton>
 >
+export let Popover: ComponentType<ComponentProps<typeof PopoverPrimitive.Root>>
+export let PopoverTrigger: ComponentType<
+  ComponentProps<typeof PopoverPrimitive.Trigger>
+>
+export let PopoverContent: ComponentType<
+  ComponentProps<typeof PopoverPrimitive.Content>
+>
+
 export let Tabs: ComponentType<ComponentProps<typeof TabsPrimitive.Root>>
 export let TabsList: ComponentType<ComponentProps<typeof TabsPrimitive.List>>
 export let TabsTrigger: ComponentType<
@@ -276,8 +285,14 @@ export let ResourceHistoryTable: <T = KubernetesResource>(
 ) => ReactElement
 export let RelatedResourcesTable: ComponentType<ResourceEventsProps>
 
+export interface LogViewerEntry {
+  id: string | number
+  text: string
+  timestamp?: string
+}
+
 export interface LogViewerProps {
-  namespace: string
+  namespace?: string
   podName?: string
   pods?: Pod[]
   labelSelector?: string
@@ -286,6 +301,10 @@ export interface LogViewerProps {
   ephemeralContainers?: EphemeralContainer[]
   selectedContainerName?: string
   onClose?: () => void
+  entries?: readonly LogViewerEntry[]
+  toolbar?: ReactNode
+  status?: ReactNode
+  onClear?: () => void
 }
 
 export let LogViewer: ComponentType<LogViewerProps>
