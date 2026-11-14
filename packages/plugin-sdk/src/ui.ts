@@ -285,14 +285,8 @@ export let ResourceHistoryTable: <T = KubernetesResource>(
 ) => ReactElement
 export let RelatedResourcesTable: ComponentType<ResourceEventsProps>
 
-export interface LogViewerEntry {
-  id: string | number
-  text: string
-  timestamp?: string
-}
-
 export interface LogViewerProps {
-  namespace?: string
+  namespace: string
   podName?: string
   pods?: Pod[]
   labelSelector?: string
@@ -301,13 +295,30 @@ export interface LogViewerProps {
   ephemeralContainers?: EphemeralContainer[]
   selectedContainerName?: string
   onClose?: () => void
-  entries?: readonly LogViewerEntry[]
-  toolbar?: ReactNode
-  status?: ReactNode
-  onClear?: () => void
 }
 
 export let LogViewer: ComponentType<LogViewerProps>
+
+export interface LogViewerEntry {
+  id: string | number
+  text: string
+  timestamp?: number
+}
+
+export interface LogViewerPanelProps {
+  entries: readonly LogViewerEntry[]
+  header?: ReactNode
+  toolbar?: ReactNode
+  settings?: ReactNode
+  status?: ReactNode
+  defaultTheme?:
+    'classic' | 'matrix' | 'cyberpunk' | 'solarized' | 'monokai' | 'github'
+  downloadFilename?: string
+  onClear?: () => void
+  onClose?: () => void
+}
+
+export let LogViewerPanel: ComponentType<LogViewerPanelProps>
 
 export interface TerminalProps {
   type?: 'node' | 'pod' | 'kubectl'
