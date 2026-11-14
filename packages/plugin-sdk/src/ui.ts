@@ -6,6 +6,7 @@ import type {
 } from 'react'
 import type * as DialogPrimitive from '@radix-ui/react-dialog'
 import type * as LabelPrimitive from '@radix-ui/react-label'
+import type * as PopoverPrimitive from '@radix-ui/react-popover'
 import type * as SelectPrimitive from '@radix-ui/react-select'
 import type * as TabsPrimitive from '@radix-ui/react-tabs'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -103,6 +104,14 @@ export let SelectScrollUpButton: ComponentType<
 export let SelectScrollDownButton: ComponentType<
   ComponentProps<typeof SelectPrimitive.ScrollDownButton>
 >
+export let Popover: ComponentType<ComponentProps<typeof PopoverPrimitive.Root>>
+export let PopoverTrigger: ComponentType<
+  ComponentProps<typeof PopoverPrimitive.Trigger>
+>
+export let PopoverContent: ComponentType<
+  ComponentProps<typeof PopoverPrimitive.Content>
+>
+
 export let Tabs: ComponentType<ComponentProps<typeof TabsPrimitive.Root>>
 export let TabsList: ComponentType<ComponentProps<typeof TabsPrimitive.List>>
 export let TabsTrigger: ComponentType<
@@ -289,6 +298,27 @@ export interface LogViewerProps {
 }
 
 export let LogViewer: ComponentType<LogViewerProps>
+
+export interface LogViewerEntry {
+  id: string | number
+  text: string
+  timestamp?: number
+}
+
+export interface LogViewerPanelProps {
+  entries: readonly LogViewerEntry[]
+  header?: ReactNode
+  toolbar?: ReactNode
+  settings?: ReactNode
+  status?: ReactNode
+  defaultTheme?:
+    'classic' | 'matrix' | 'cyberpunk' | 'solarized' | 'monokai' | 'github'
+  downloadFilename?: string
+  onClear?: () => void
+  onClose?: () => void
+}
+
+export let LogViewerPanel: ComponentType<LogViewerPanelProps>
 
 export interface TerminalProps {
   type?: 'node' | 'pod' | 'kubectl'
