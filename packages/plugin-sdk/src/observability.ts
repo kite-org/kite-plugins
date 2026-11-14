@@ -60,11 +60,14 @@ export interface LogsWebSocketOptions {
   tailLines?: number
   timestamps?: boolean
   previous?: boolean
+  follow?: boolean
   sinceSeconds?: number
   enabled?: boolean
   labelSelector?: string
   onNewLog?: (log: string) => void
   onClear?: () => void
+  onStreamError?: (error: Error) => void
+  onStreamEnd?: (podName: string) => void
 }
 
 export interface LogsWebSocketResult {
