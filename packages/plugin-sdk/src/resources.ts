@@ -188,6 +188,19 @@ export interface CopyDebugPodRequest {
   command: string[]
 }
 
+export interface PodExecRequest {
+  command: string[]
+  container?: string
+  timeoutSeconds?: number
+}
+
+export interface PodExecResponse {
+  stdout: string
+  stderr: string
+  truncated: boolean
+  exitCode: number
+}
+
 export interface DebugPodResponse {
   pod: Pod
   containerName: string
@@ -316,6 +329,11 @@ export let copyDebugPod: (
   name: string,
   body: CopyDebugPodRequest
 ) => Promise<DebugPodResponse>
+export let execPodCommand: (
+  namespace: string,
+  name: string,
+  body: PodExecRequest
+) => Promise<PodExecResponse>
 export let podDownloadFile: (
   namespace: string,
   podName: string,
