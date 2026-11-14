@@ -299,6 +299,32 @@ export interface LogViewerProps {
 
 export let LogViewer: ComponentType<LogViewerProps>
 
+export interface PodFileBrowserProps {
+  namespace: string
+  podName: string
+  containers?: Container[]
+  initContainers?: Container[]
+  container?: string
+  rootPath?: string
+  readOnly?: boolean
+}
+
+export let PodFileBrowser: ComponentType<PodFileBrowserProps>
+
+export interface DeleteConfirmationDialogProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  resourceName: string
+  resourceType: string
+  onConfirm: (force?: boolean, wait?: boolean) => void
+  isDeleting?: boolean
+  namespace?: string
+  additionalNote?: string
+  showAdditionalOptions?: boolean
+}
+
+export let DeleteConfirmationDialog: ComponentType<DeleteConfirmationDialogProps>
+
 export interface LogViewerEntry {
   id: string | number
   text: string
