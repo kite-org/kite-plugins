@@ -167,6 +167,37 @@ importers:
         specifier: ^8.0.0
         version: 8.2.2(@types/node@24.13.3)(jiti@2.7.0)
 
+  plugins/aggregated-logs:
+    dependencies:
+      '@kite-dev/plugin-sdk':
+        specifier: workspace:^
+        version: link:../../packages/plugin-sdk
+      '@tabler/icons-react':
+        specifier: ^3.46.0
+        version: 3.47.0(react@19.2.8)
+      react:
+        specifier: ^19.2.0
+        version: 19.2.8
+      react-dom:
+        specifier: ^19.2.0
+        version: 19.2.8(react@19.2.8)
+    devDependencies:
+      '@types/node':
+        specifier: ^24.0.0
+        version: 24.13.3
+      '@types/react':
+        specifier: ^19.2.0
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19.2.0
+        version: 19.2.7(@types/react@19.2.18)
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.0.0
+        version: 8.2.2(@types/node@24.13.3)(jiti@2.7.0)
+
   plugins/cert-manager:
     dependencies:
       '@kite-dev/plugin-sdk':
@@ -212,6 +243,34 @@ importers:
       react-router-dom:
         specifier: ^7.0.0
         version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+    devDependencies:
+      '@types/node':
+        specifier: ^24.0.0
+        version: 24.13.3
+      '@types/react':
+        specifier: ^19.2.0
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19.2.0
+        version: 19.2.7(@types/react@19.2.18)
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.0.0
+        version: 8.2.2(@types/node@24.13.3)(jiti@2.7.0)
+
+  plugins/pvc-file-browser:
+    dependencies:
+      '@kite-dev/plugin-sdk':
+        specifier: workspace:^
+        version: link:../../packages/plugin-sdk
+      react:
+        specifier: ^19.2.0
+        version: 19.2.8
+      react-dom:
+        specifier: ^19.2.0
+        version: 19.2.8(react@19.2.8)
     devDependencies:
       '@types/node':
         specifier: ^24.0.0

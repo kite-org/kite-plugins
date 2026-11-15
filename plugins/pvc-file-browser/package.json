@@ -1,0 +1,31 @@
+{
+  "name": "pvc-file-browser",
+  "displayName": "PVC File Browser",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "description": "Browse PVC files through existing mounts or a temporary helper pod.",
+  "author": "zxh326",
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "build": "tsc --noEmit && vite build",
+    "dev": "kite-plugin dev",
+    "pack": "kite-plugin pack"
+  },
+  "dependencies": {
+    "@kite-dev/plugin-sdk": "workspace:^",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "6.0.3",
+    "vite": "^8.0.0"
+  },
+  "engines": {
+    "kite": ">=0.18.0"
+  }
+}
