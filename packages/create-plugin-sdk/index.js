@@ -193,10 +193,15 @@ async function main() {
     name: id,
     displayName,
     version: '0.1.0',
-    private: true,
     type: 'module',
     license: 'Apache-2.0',
     description: '',
+    keywords: ['kite-plugin'],
+    files: ['dist'],
+    publishConfig: {
+      registry: 'https://registry.npmjs.org/',
+      access: 'public',
+    },
     engines: { kite: defaultKiteRange },
     scripts: {
       'type-check': 'tsc --noEmit',

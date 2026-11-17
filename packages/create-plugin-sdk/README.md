@@ -37,3 +37,16 @@ npm create @kite-dev/plugin-sdk -- my-plugin --yes --display-name "My Plugin"
 ```sh
 pnpm create @kite-dev/plugin-sdk my-plugin --yes --display-name "My Plugin"
 ```
+
+## Publish to npm
+
+New plugins include `dist/` in their npm package and publish publicly to npmjs by default. After installing dependencies, run these commands from the generated project directory:
+
+```sh
+npm run build
+npm publish
+```
+
+Log in to npm first and choose an available package name. In Kite, select **Plugin management → Install from npm**, enter that name, and choose **npmjs** or **npmmirror**. Kite installs the `latest` version; newly published versions may take time to appear on npmmirror.
+
+Increment the version in `package.json` before building and publishing an update.
